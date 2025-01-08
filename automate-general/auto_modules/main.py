@@ -4,7 +4,7 @@ from info import copy_info_tabla_carga
 from navigation import navigate_to_carga_archivo, navigate_to_fecha_gen
 from utils import take_screenshot
 from utils import clasificar_tablas_por_procesado
-from navigation import ejecutar_carga
+from jde import procesar_pendientes, informes_recientes_estado
 
 fecha = "20241226"
 summary_steps = []
@@ -29,16 +29,22 @@ def main():
         # Imprimir primeras 10 filas tabla Registros en Carga Archivo
         registros_df = copy_info_tabla_carga(driver)
         summary_steps.append("- Datos extraídos de tablas en Carga Archivo.")
+        print(registros_df)
+
         # Guardar las primeras 10 filas en el resumen
         summary_steps.append("- Primeras 10 filas extraídas de las tablas:")
         summary_steps.append(registros_df.head(10).to_string(index=False))
+
         # Clasificar tablas según el estado 'Procesado (S/N)'
         pendientes, descartadas = clasificar_tablas_por_procesado(registros_df)
         summary_steps.append(f"- Tablas pendientes (Procesado = 'N'): {pendientes}")
         summary_steps.append(f"- Tablas descartadas (Procesado = 'S'): {descartadas}")
-        print(pendientes[0])
-        ejecutar_carga(driver, pendientes[0])
-        # Esperar a que aparezca nuevo estado de trabajo
+        sidebar01 = informes_recientes_estado(driver)
+        print(sidebar01)
+        summary_steps.append(sidebar01)
+        print(pendientes)
+        procesar_pendientes(driver, pendientes)
+        
 
 # ---------------------------------------------------
 
