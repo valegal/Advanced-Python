@@ -13,7 +13,7 @@ def copy_info_tabla_carga_simple(driver):
     # Salir del iframe actual y entrar en el iframe específico
     driver.switch_to.default_content()
     switch_to_iframe(driver, "e1menuAppIframe")
-    print("Estamos en el iframe e1menuAppIframe")
+    print("Copiando infromación de la tabla Registros en Carga Archivos")
     
     celdasNombre = driver.find_elements(By.CSS_SELECTOR, "td[colindex='1'].JSGridCell.textModifier.selectedModifier div")
     celdasFase = driver.find_elements(By.CSS_SELECTOR, "td[colindex='3'].JSGridCell.textModifier.selectedModifier div")
@@ -97,3 +97,27 @@ def copy_info_tabla_carga(driver):
     print(df.to_string(index=False))
 
     return df
+
+# ---------------------------------------------------
+
+def informes_recientes_estado(driver):
+    driver.switch_to.default_content()
+    """
+    Extrae los textos de los últimos diez registros en la lista con id 'listRecRpts'.
+    
+    """
+    try:
+        # Localizar la lista de registros recientes
+        lista_elementos = driver.find_elements(By.CSS_SELECTOR, "#listRecRptsInner .listItem .listText")
+        
+        # Extraer los textos de los elementos
+        textos_registros = [elemento.text for elemento in lista_elementos]
+        
+        # Tomar los últimos diez registros (o menos si no hay suficientes)
+        ultimos_diez_registros = textos_registros[-10:]
+        
+        return ultimos_diez_registros
+    
+    except Exception as e:
+        print(f"Error al obtener los últimos diez registros: {e}")
+        return []

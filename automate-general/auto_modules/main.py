@@ -1,12 +1,14 @@
 from config import setup_driver
 from login import login
-from info import copy_info_tabla_carga
+from info import copy_info_tabla_carga, informes_recientes_estado
 from navigation import navigate_to_carga_archivo, navigate_to_fecha_gen
 from utils import take_screenshot
 from utils import clasificar_tablas_por_procesado
-from jde import procesar_pendientes, informes_recientes_estado
+from jde import procesar_pendientes
+from verify import verificar_carga_en_sidebar
+import time
 
-fecha = "20241226"
+fecha = "20150914"
 summary_steps = []
 
 def main():
@@ -35,21 +37,43 @@ def main():
         summary_steps.append(registros_df.head(10).to_string(index=False))
 
         # Clasificar tablas según el estado 'Procesado (S/N)'
-        pendientes, descartadas = clasificar_tablas_por_procesado(registros_df)
+        pendientes, procesadas = clasificar_tablas_por_procesado(registros_df)
         summary_steps.append(f"- Tablas pendientes (Procesado = 'N'): {pendientes}")
-        summary_steps.append(f"- Tablas descartadas (Procesado = 'S'): {descartadas}")
+        summary_steps.append(f"- Tablas descartadas (Procesado = 'S'): {procesadas}")
+        print(f"Hay {len(pendientes)} registros pendientes y {len(procesadas)} registros procesados")
+        summary_steps.append(f"Hay {len(pendientes)} registros pendientes y {len(procesadas)} registros procesados")
+
+        # Sidebar inicial
         sidebar01 = informes_recientes_estado(driver)
+        summary_steps.append("Sidebar inicial:")
+        summary_steps.append("\n".join(map(str, sidebar01)) if isinstance(sidebar01, list) else str(sidebar01))
         print(sidebar01)
-        summary_steps.append(sidebar01)
+
         print(pendientes)
         procesar_pendientes(driver, pendientes)
-        
+        time.sleep(12)
+        registros_df = copy_info_tabla_carga(driver)
+        summary_steps.append("- Después de la carga:")
+        summary_steps.append(registros_df.head(10).to_string(index=False))
+        df = registros_df
 
+        time.sleep(8)
+
+        # Sidebar despues de las cargas
+        sidebar02 = informes_recientes_estado(driver)
+        summary_steps.append("Sidebar después de las cargas:")
+        summary_steps.append("\n".join(map(str, sidebar02)) if isinstance(sidebar02, list) else str(sidebar01))
+        print(sidebar02)
+
+        verificar_carga_en_sidebar(sidebar02)
+        print("Espera, cuenta: ")
+        time.sleep(180)
+        print("Fin de la espera")
+        
 # ---------------------------------------------------
 
-
         # Crear resumen de pasos
-        summary_path = r"D:\OneDrive - Grupo EPM\Descargas\RESUMEN.txt"
+        summary_path = r"D:\OneDrive - Grupo EPM\Descargas\Resumen001.txt"
         with open(summary_path, "w", encoding="utf-8") as file:
             file.write("\n".join(summary_steps))
         summary_steps.append(f"Resumen de pasos guardado en '{summary_path}'.")

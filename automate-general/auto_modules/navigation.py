@@ -53,7 +53,7 @@ def navigate_to_carga_archivo(driver):
         try:
             # Intentar clic con ActionChains
             action.move_to_element(target_element).click().perform()
-            print("¡Clic realizado exitosamente!")
+            print("¡Entramos a Carga Archivo Facturación!")
         except ElementClickInterceptedException:
             print("Elemento bloqueado por otro elemento, intentando clic con JavaScript.")
             # Forzar clic con JavaScript
@@ -67,7 +67,6 @@ def navigate_to_fecha_gen(driver, fecha):
     # Volver al iframe `e1menuAppIframe`
     driver.switch_to.default_content()  # Salir del iframe actual
     switch_to_iframe(driver, "e1menuAppIframe")
-    print("Estamos en el iframe e1menuAppIframe")
 
     # Buscar el input de fecha y escribir '20150914' o '20160208'
     input_fecha = WebDriverWait(driver, 20).until(
