@@ -3,9 +3,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.common.exceptions import ElementClickInterceptedException
+from selenium.common.exceptions import ElementClickInterceptedException, ElementClickInterceptedException, TimeoutException
 from navigation import switch_to_iframe
-from navigation import navigate_to_carga_archivo
+from navigation import navigate_to_carga_archivo, navigate_to_carga_archivo_simple
 import time
 
 def procesar_pendientes(driver, pendientes):
@@ -22,55 +22,87 @@ def procesar_pendientes(driver, pendientes):
 
 
 def ejecutar_carga(driver, id_tabla):
+    try:
+        # Cambiar al contexto principal e ingresar al iframe
+        driver.switch_to.default_content()
+        switch_to_iframe(driver, "e1menuAppIframe")
 
-            driver.switch_to.default_content()
-            switch_to_iframe(driver, "e1menuAppIframe")
-            # Localizar la tabla por su ID
-            tabla = WebDriverWait(driver, 20).until(
-                EC.presence_of_element_located((By.ID, id_tabla))
-            )
-            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", tabla)
-            print(f"Tabla {id_tabla} localizada y visible.")
-
-            # Buscar el elemento dentro de la tabla y darle clic
-            elemento_clic = tabla.find_element(By.XPATH, 
-                ".//td[@colindex='-2']//a/img[@title='Sin anexos']"
+        # Localizar la tabla por su ID
+        tabla = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.ID, id_tabla))
+        )
+        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", tabla)
+        print(f"Tabla {id_tabla} localizada y visible.")
+        
+        # Buscar el elemento dentro de la tabla y darle clic
+        try:
+            
+            elemento_clic = tabla.find_element(
+                By.XPATH, ".//td[@colindex='-2']//a/img[@title='Sin anexos']"
             )
             ActionChains(driver).move_to_element(elemento_clic).click().perform()
             print(f"Clic en el elemento dentro de la tabla {id_tabla} realizado.")
-            time.sleep(2) 
-            # Clic en el botón "Ejecutar Carga"
+        except Exception as e:
+            print(f"Error al localizar o hacer clic en el elemento dentro de la tabla {id_tabla}: {e}")
+            return
+        
+        # Esperar un momento para la acción subsiguiente
+        time.sleep(2)
+        
+        # Localizar y hacer doble clic en el botón "Ejecutar Carga"
+        try:
             ejecutar_carga_boton = WebDriverWait(driver, 20).until(
                 EC.element_to_be_clickable((By.ID, "C0_28"))
             )
             ActionChains(driver).move_to_element(ejecutar_carga_boton).double_click().perform()
             print(f"Botón 'Ejecutar Carga' clickeado para la tabla {id_tabla}.")
-            time.sleep(4) 
+        except Exception as e:
+            print(f"Error al hacer clic en el botón 'Ejecutar Carga': {e}")
+            return
+        
+        # Esperar para que la carga se procese
+        time.sleep(4)
 
-            # Cambiar al iframe en la nueva vista
+        # Clic en el botón "Cancelar" dentro del iframe
+        try:
             driver.switch_to.default_content()
             switch_to_iframe(driver, "e1menuAppIframe")
-
-            # Localizar el botón "Cancelar" y darle clic
-            cancelar_boton = WebDriverWait(driver, 30).until(
-                EC.element_to_be_clickable((By.ID, "jdeclose_ena"))
+            herramientas_element = WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.XPATH, "//div[@class='WebLabel' and @title='Herramientas (Ctrl+Alt+T)']")))
+            herramientas_element.click()
+            cancelar_element = WebDriverWait(driver, 40).until(
+                EC.element_to_be_clickable((
+                    By.XPATH, "//td[@valign='top' and @style='min-width:20px;' and @align='center']//a[img[@title='Cancelar (Ctrl+Alt+L)']]"
+                ))
             )
-            ActionChains(driver).move_to_element(cancelar_boton).double_click().perform()
-            print(f"Botón 'Cancelar' clickeado en la vista secundaria para la tabla {id_tabla}.")
-            time.sleep(2)
-
+            
+            # Hacer clic en el elemento
+            cancelar_element.click()
+            print("Clic en el botón 'Cancelar' realizado.")
+        except Exception as e:
+            print(f"Error al hacer clic en el botón 'Cancelar': {e}")
+            return
+        
+        # Esperar 5 segundos y clic en el logotipo de Oracle para volver al inicio
+        time.sleep(5)
+        try:
             driver.switch_to.default_content()
-            switch_to_iframe(driver, "e1menuAppIframe")
-
-            # Localizar el botón "Cancelar" en carga de archivos y darle clic
-            cancelar_boton_2 = WebDriverWait(driver, 30).until(
-                EC.element_to_be_clickable((By.ID, "outer0_13"))
+            oracle_logo = WebDriverWait(driver, 20).until(
+                EC.element_to_be_clickable((By.ID, "oracleImage"))
             )
-            ActionChains(driver).move_to_element(cancelar_boton_2).double_click().perform()
-            print(f"Botón 'Cancelar' clickeado para la tabla {id_tabla} vuelve a la vista principal.")
+            oracle_logo.click()
+            print("Clic en el logotipo de Oracle realizado para volver al inicio.")
+        except Exception as e:
+            print(f"Error al hacer clic en el logotipo de Oracle: {e}")
+            return
+        
+        # Llamar a la función navigate_to_carga_archivo_simple
+        navigate_to_carga_archivo_simple(driver)
+        print("Función navigate_to_carga_archivo_simple llamada exitosamente.")
 
-            time.sleep(2)
-            navigate_to_carga_archivo(driver)
+    except Exception as e:
+        print(f"Error en ejecutar_carga: {e}")
+
 
 def informes_recientes_estado(driver):
     driver.switch_to.default_content()

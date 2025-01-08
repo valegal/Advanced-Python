@@ -150,58 +150,36 @@ def ejecutar_carga_muchas(driver, id_tablas, fecha):
             take_screenshot(driver, f"error_{id_tabla}.png")
             print(f"Captura de pantalla tomada para el error en la tabla {id_tabla}.")
 
-# ---------------------------------------------------
+# ------------------------------------------------
+def navigate_to_carga_archivo_simple(driver):
+    """Navega a la vista de carga de archivo en la plataforma sin ir al tab3"""
+    # Cambiar al primer iframe
+    switch_to_iframe(driver, "e1menuAppIframe")
+    action = ActionChains(driver)
+    # Cambiar al segundo y tercer iframe
+    switch_to_iframe(driver, "wcFrame3")
+    switch_to_iframe(driver, "RIPaneIFRAME1")
 
-def ejecutar_carga(driver, id_tabla):
+    # Localizar el elemento objetivo y hacer clic
+    target_element = WebDriverWait(driver, 20).until(
+        EC.presence_of_element_located((By.XPATH, "//span[text()='Carga Archivo Interfaz Facturación - Contabilidad']"))
+    )
 
-            # Localizar la tabla por su ID
-            tabla = WebDriverWait(driver, 20).until(
-                EC.presence_of_element_located((By.ID, id_tabla))
-            )
-            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", tabla)
-            print(f"Tabla {id_tabla} localizada y visible.")
+    # Forzar desplazamiento para visibilidad
+    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", target_element)
+    time.sleep(1)  # Esperar un momento después del desplazamiento
 
-            # Buscar el elemento dentro de la tabla y darle clic
-            elemento_clic = tabla.find_element(By.XPATH, 
-                ".//td[@colindex='-2']//a/img[@title='Sin anexos']"
-            )
-            ActionChains(driver).move_to_element(elemento_clic).click().perform()
-            print(f"Clic en el elemento dentro de la tabla {id_tabla} realizado.")
-            time.sleep(2) 
-            # Clic en el botón "Ejecutar Carga"
-            ejecutar_carga_boton = WebDriverWait(driver, 20).until(
-                EC.element_to_be_clickable((By.ID, "C0_28"))
-            )
-            ActionChains(driver).move_to_element(ejecutar_carga_boton).click().perform()
-            print(f"Botón 'Ejecutar Carga' clickeado para la tabla {id_tabla}.")
-            time.sleep(3) 
+    # Verificar si el elemento está visible
+    if target_element.is_displayed():
+        try:
+            # Intentar clic con ActionChains
+            action.move_to_element(target_element).click().perform()
+            print("¡Clic realizado exitosamente!")
+        except ElementClickInterceptedException:
+            print("Elemento bloqueado por otro elemento, intentando clic con JavaScript.")
+            # Forzar clic con JavaScript
+            driver.execute_script("arguments[0].click();", target_element)
+    else:
+        print("El elemento no es interactivo o está oculto.")
 
-            # Cambiar al iframe en la nueva vista
-            driver.switch_to.default_content()
-            switch_to_iframe(driver, "e1menuAppIframe")
-
-            # Localizar el botón "Cancelar" y darle clic
-            cancelar_boton = WebDriverWait(driver, 20).until(
-                EC.element_to_be_clickable((By.ID, "hc_Cancel"))
-            )
-            ActionChains(driver).move_to_element(cancelar_boton).click().perform()
-            print(f"Botón 'Cancelar' clickeado en la vista secundaria para la tabla {id_tabla}.")
-            time.sleep(2)
-            driver.switch_to.default_content()
-            switch_to_iframe(driver, "e1menuAppIframe")
-
-            cancelar_boton_2 = WebDriverWait(driver, 20).until(
-                EC.element_to_be_clickable((By.ID, "hc_Cancel"))
-            )
-            ActionChains(driver).move_to_element(cancelar_boton_2).click().perform()
-            print(f"Botón 'Cancelar' clickeado para la tabla {id_tabla} vuelve a la vista principal.")
-            time.sleep(2)
-
-
-
-#           DOS
-#       ██████   ███     
-#      ██    ██   ██     
-#      ██    ██   ██     
-#      ██    ██   ██     
-#       ██████   ████   
+        # ------------------------------------------------

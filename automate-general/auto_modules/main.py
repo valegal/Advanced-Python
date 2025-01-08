@@ -29,7 +29,6 @@ def main():
         # Imprimir primeras 10 filas tabla Registros en Carga Archivo
         registros_df = copy_info_tabla_carga(driver)
         summary_steps.append("- Datos extraídos de tablas en Carga Archivo.")
-        print(registros_df)
 
         # Guardar las primeras 10 filas en el resumen
         summary_steps.append("- Primeras 10 filas extraídas de las tablas:")
