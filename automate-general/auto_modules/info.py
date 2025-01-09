@@ -5,6 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import ElementClickInterceptedException
 from navigation import switch_to_iframe
+import time
 import pandas as pd
 
 # ---------------------------------------------------
@@ -104,12 +105,23 @@ def copy_info_tabla_carga(driver):
 # ---------------------------------------------------
 
 def informes_recientes_estado(driver):
+    """
+    Realiza un doble clic en el botón 'Actualizar' antes de extraer los textos 
+    de los últimos diez registros en la lista con id 'listRecRpts'.
+    """
     driver.switch_to.default_content()
-    """
-    Extrae los textos de los últimos diez registros en la lista con id 'listRecRpts'.
     
-    """
     try:
+        # Localizar el botón 'Actualizar'
+        boton_actualizar = driver.find_element(By.CLASS_NAME, "recentReportsRefreshControl")
+        
+        # Realizar doble clic en el botón 'Actualizar'
+        action = ActionChains(driver)
+        action.double_click(boton_actualizar).perform()
+
+        # Esperar un breve momento para que la lista se actualice
+        time.sleep(2)  # Ajustar según el tiempo de carga de la página
+
         # Localizar la lista de registros recientes
         lista_elementos = driver.find_elements(By.CSS_SELECTOR, "#listRecRptsInner .listItem .listText")
         
@@ -117,10 +129,10 @@ def informes_recientes_estado(driver):
         textos_registros = [elemento.text for elemento in lista_elementos]
         
         # Tomar los últimos diez registros (o menos si no hay suficientes)
-        ultimos_diez_registros = textos_registros[-5:]
+        ultimos_diez_registros = textos_registros[-10:]
         
         return ultimos_diez_registros
-    
+
     except Exception as e:
         print(f"Error al obtener los últimos diez registros: {e}")
         return []

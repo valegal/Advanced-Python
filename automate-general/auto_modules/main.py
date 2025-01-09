@@ -71,7 +71,7 @@ def main():
         
         #Verificar la palabra carga en 'informes recientes'
         verificar_carga_en_sidebar(sidebar02)
-        time.sleep(180)
+        time.sleep(10) #Esto debería ser como 3-15 minutos
         if sidebar02 == True:
             print("Ya hay carga")
             summary_steps.append("→ Palabra 'Carga' existente en Informes recientes")
@@ -79,8 +79,10 @@ def main():
             print("No hay carga")
         summary_steps.append("→ Palabra 'Carga' NO existente en Informes recientes")
 
+        # Volver al inicio
         navigate_home(driver)
-        
+        summary_steps.append("→ Volver al inicio")
+
         # Navegar a la vista Revisión de hechos económicos
         navigate_to_review_hechos_econo(driver)
         summary_steps.append("→ Navegación a la vista de Revisión Hechos Económicos IF.")
