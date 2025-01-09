@@ -5,10 +5,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import ElementClickInterceptedException, ElementClickInterceptedException, TimeoutException
 from navigation import switch_to_iframe
-from navigation import navigate_to_carga_archivo, navigate_to_carga_archivo_simple
+from navigation import navigate_to_fecha_gen, navigate_to_carga_archivo_simple
+from config import fecha
 import time
 
-def procesar_pendientes(driver, pendientes):
+def procesar_pendientes(driver, pendientes, summary_steps):
     """
     Procesa cada tabla pendiente ejecutando la función ejecutar_carga para cada una.
     """
@@ -22,13 +23,16 @@ def procesar_pendientes(driver, pendientes):
             # Ejecutar la función para procesar la tabla
             ejecutar_carga(driver, id_tabla)
             print(f"Tabla {id_tabla} procesada exitosamente.")
+            summary_steps.append(f"→ Tabla {id_tabla} procesada exitosamente.")
         except Exception as e:
             # Captura cualquier error pero continúa con el siguiente pendiente
             print(f"Error al procesar la tabla {id_tabla}: {e}")
             continue  # Aseguramos que pase al siguiente elemento
     print("Todos los pendientes han sido procesados.")
 
+# Ejecutar carga de forma individual para cada registro
 def ejecutar_carga(driver, id_tabla):
+    
     try:
         driver.switch_to.default_content()
         switch_to_iframe(driver, "e1menuAppIframe")
@@ -71,6 +75,7 @@ def ejecutar_carga(driver, id_tabla):
             herramientas_element = WebDriverWait(driver, 20).until(
             EC.element_to_be_clickable((By.XPATH, "//div[@class='WebLabel' and @title='Herramientas (Ctrl+Alt+T)']")))
             herramientas_element.click()
+
             buscar_cancel = WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "hc_Cancel")))
             buscar_cancel.click()
             time.sleep(4)
@@ -94,7 +99,9 @@ def ejecutar_carga(driver, id_tabla):
         
         # Llamar a la función navigate_to_carga_archivo_simple
         navigate_to_carga_archivo_simple(driver)
-        print(f"Función navigate_to_carga_archivo_simple en {id_tabla}")
+        print(f"Usar función navigate_to_carga_archivo_simple en {id_tabla}")
+        navigate_to_fecha_gen(driver, fecha)
+        print(f"Usar función navigate_to_fecha_gen")
         print("------ Repeat ------")
 
     except Exception as e:

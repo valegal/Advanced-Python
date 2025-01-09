@@ -61,6 +61,13 @@ def navigate_to_carga_archivo(driver):
     else:
         print("El elemento no es interactivo o está oculto.")
 
+#           DOS
+#       ██████   ███     
+#      ██    ██   ██     
+#      ██    ██   ██     
+#      ██    ██   ██     
+#       ██████   ████   
+
 # -------------------------------------------------
 def navigate_to_fecha_gen(driver, fecha):
     """Navega hasta la tabla de registros y selecciona el campo de fecha."""
@@ -83,6 +90,13 @@ def navigate_to_fecha_gen(driver, fecha):
     buscar_icon.click()
     print("Clic en el icono de búsqueda realizado.")
     time.sleep(3)
+
+#           TRES
+#       ██████   ███     
+#      ██    ██   ██     
+#      ██    ██   ██     
+#      ██    ██   ██     
+#       ██████   ████ 
 
 # ---------------------------------------------------
 def ejecutar_carga_muchas(driver, id_tablas, fecha):
@@ -149,6 +163,13 @@ def ejecutar_carga_muchas(driver, id_tablas, fecha):
             take_screenshot(driver, f"error_{id_tabla}.png")
             print(f"Captura de pantalla tomada para el error en la tabla {id_tabla}.")
 
+#           CUATRO
+#       ██████   ███     
+#      ██    ██   ██     
+#      ██    ██   ██     
+#      ██    ██   ██     
+#       ██████   ████ 
+
 # ------------------------------------------------
 def navigate_to_carga_archivo_simple(driver):
     """Navega a la vista de carga de archivo en la plataforma sin ir al tab3"""
@@ -173,7 +194,7 @@ def navigate_to_carga_archivo_simple(driver):
         try:
             # Intentar clic con ActionChains
             action.move_to_element(target_element).click().perform()
-            print("¡Clic realizado exitosamente!")
+            print("¡Open OneWorld: Carga Archivo IF-C!")
         except ElementClickInterceptedException:
             print("Elemento bloqueado por otro elemento, intentando clic con JavaScript.")
             # Forzar clic con JavaScript
@@ -181,4 +202,104 @@ def navigate_to_carga_archivo_simple(driver):
     else:
         print("El elemento no es interactivo o está oculto.")
 
-        # ------------------------------------------------
+#           CINCO
+#       ██████   ███     
+#      ██    ██   ██     
+#      ██    ██   ██     
+#      ██    ██   ██     
+#       ██████   ████ 
+
+# ------------------------------------------------
+
+def navigate_to_review_hechos_econo(driver):
+    """Navega a la vista de Revisión Hechos Económicos Interfaz Facturación en la plataforma sin ir al tab3"""
+    # Cambiar al primer iframe
+    switch_to_iframe(driver, "e1menuAppIframe")
+    action = ActionChains(driver)
+    # Cambiar al segundo y tercer iframe
+    switch_to_iframe(driver, "wcFrame3")
+    switch_to_iframe(driver, "RIPaneIFRAME1")
+
+    # Localizar el elemento objetivo y hacer clic
+    target_element = WebDriverWait(driver, 20).until(
+        EC.presence_of_element_located((By.XPATH, "//span[text()='Revisión Hechos Económicos Interfaz Facturación']"))
+    )
+
+    # Forzar desplazamiento para visibilidad
+    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", target_element)
+    time.sleep(1)  # Esperar un momento después del desplazamiento
+    
+    # Verificar si el elemento está visible
+    if target_element.is_displayed():
+        try:
+            # Intentar clic con ActionChains
+            action.move_to_element(target_element).click().perform()
+            print("¡Open OneWorld: Revisión Hechos Económicos IF!")
+        except ElementClickInterceptedException:
+            print("Elemento bloqueado por otro elemento, intentando clic con JavaScript.")
+            # Forzar clic con JavaScript
+            driver.execute_script("arguments[0].click();", target_element)
+    else:
+        print("El elemento no es interactivo o está oculto.")
+
+#           SEIS
+#       ██████   ███     
+#      ██    ██   ██     
+#      ██    ██   ██     
+#      ██    ██   ██     
+#       ██████   ████ 
+
+# ------------------------------------------------
+
+def navigate_home(driver):
+        
+        try:
+            driver.switch_to.default_content()
+            oracle_logo = WebDriverWait(driver, 20).until(
+                EC.element_to_be_clickable((By.ID, "oracleImage"))
+            )
+            oracle_logo.click()
+            print("Clic en el logotipo de Oracle realizado para volver al inicio.")
+        except Exception as e:
+            print(f"Error al hacer clic en el logotipo de Oracle: {e}")
+            return
+
+#           SIETE
+#       ██████   ███     
+#      ██    ██   ██     
+#      ██    ██   ██     
+#      ██    ██   ██     
+#       ██████   ████ 
+
+# ------------------------------------------------
+
+def navigate_control_archivos_cargados(driver):
+    """Navega a la vista de Control Archivos Cargados en la plataforma sin ir al tab3"""
+    # Cambiar al primer iframe
+    switch_to_iframe(driver, "e1menuAppIframe")
+    action = ActionChains(driver)
+    # Cambiar al segundo y tercer iframe
+    switch_to_iframe(driver, "wcFrame3")
+    switch_to_iframe(driver, "RIPaneIFRAME1")
+
+    # Localizar el elemento objetivo y hacer clic
+    target_element = WebDriverWait(driver, 20).until(
+        EC.presence_of_element_located((By.XPATH, "//span[text()='Control Archivos Cargados']"))
+    )
+
+    # Forzar desplazamiento para visibilidad
+    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", target_element)
+    time.sleep(1)  # Esperar un momento después del desplazamiento
+    
+    # Verificar si el elemento está visible
+    if target_element.is_displayed():
+        try:
+            # Intentar clic con ActionChains
+            action.move_to_element(target_element).click().perform()
+            print("¡Open OneWorld: Control Archivos Cargados!")
+        except ElementClickInterceptedException:
+            print("Elemento bloqueado por otro elemento, intentando clic con JavaScript.")
+            # Forzar clic con JavaScript
+            driver.execute_script("arguments[0].click();", target_element)
+    else:
+        print("El elemento no es interactivo o está oculto.")

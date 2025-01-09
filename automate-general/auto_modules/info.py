@@ -9,11 +9,11 @@ import pandas as pd
 
 # ---------------------------------------------------
 def copy_info_tabla_carga_simple(driver):
-    """Copia el primer nombre y la fase de todos los archivos de la tabla"""
+    """Copia el primer nombre y la fase de los archivos de la tabla registros en Carga Archivos IF"""
     # Salir del iframe actual y entrar en el iframe específico
     driver.switch_to.default_content()
     switch_to_iframe(driver, "e1menuAppIframe")
-    print("Copiando infromación de la tabla Registros en Carga Archivos")
+    print("Copiando información de la tabla Registros en Carga Archivos")
     
     celdasNombre = driver.find_elements(By.CSS_SELECTOR, "td[colindex='1'].JSGridCell.textModifier.selectedModifier div")
     celdasFase = driver.find_elements(By.CSS_SELECTOR, "td[colindex='3'].JSGridCell.textModifier.selectedModifier div")
@@ -28,6 +28,7 @@ def copy_info_tabla_carga_simple(driver):
     fechaGen = [celda.text for celda in celdasFechaGen]
     procesadoOW = [celda.text for celda in celdasProcesadoOW]
 
+    # Imprimir información del primer registro
     print("Primera fila | tabla Registros | Carga Archivo")
     print("Nombre archivo:", nombres)
     print("Fase:", fases)
@@ -40,7 +41,9 @@ def copy_info_tabla_carga_simple(driver):
 # ---------------------------------------------------
 
 def copy_info_tabla_carga(driver):
-    """Copia los valores de las tablas jdeGridData0_1.x, manejando casos donde no existan."""
+    """Copia los valores de las tablas (las 10 filas visibles 
+    de los registros en Carga Archivo IF-C) 'jdeGridData0_1.x'
+    manejando casos donde no existan."""
     # Salir del iframe actual y entrar en el iframe específico
     driver.switch_to.default_content()
     switch_to_iframe(driver, "e1menuAppIframe")
@@ -114,7 +117,7 @@ def informes_recientes_estado(driver):
         textos_registros = [elemento.text for elemento in lista_elementos]
         
         # Tomar los últimos diez registros (o menos si no hay suficientes)
-        ultimos_diez_registros = textos_registros[-10:]
+        ultimos_diez_registros = textos_registros[-5:]
         
         return ultimos_diez_registros
     

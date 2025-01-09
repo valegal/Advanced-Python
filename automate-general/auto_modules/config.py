@@ -6,6 +6,7 @@ import logging
 # Configuración general
 CHROMEDRIVER_PATH = r"C:\Users\vgaleanc\Escritorio\chromedriver-win64\chromedriver.exe"
 WEBSITE_URL_JDE = "https://epm-vws20c.corp.epm.com.co/jde/E1Menu.maf"
+fecha = "20150914"
 
 def setup_driver():
     """Configura y retorna el driver de Selenium."""
