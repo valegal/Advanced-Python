@@ -227,7 +227,7 @@ def navigate_to_review_hechos_econo(driver):
 
     # Forzar desplazamiento para visibilidad
     driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", target_element)
-    time.sleep(1)  # Esperar un momento después del desplazamiento
+    time.sleep(2)  # Esperar un momento después del desplazamiento
     
     # Verificar si el elemento está visible
     if target_element.is_displayed():
@@ -303,3 +303,172 @@ def navigate_control_archivos_cargados(driver):
             driver.execute_script("arguments[0].click();", target_element)
     else:
         print("El elemento no es interactivo o está oculto.")
+
+#           OCHO
+#       ██████   ███     
+#      ██    ██   ██     
+#      ██    ██   ██     
+#      ██    ██   ██     
+#       ██████   ████ 
+
+# ------------------------------------------------
+
+def navigate_agrupacion_hechos(driver):
+    """Navega a la vista de Control Archivos Cargados en la plataforma sin ir al tab3"""
+    # Cambiar al primer iframe
+    switch_to_iframe(driver, "e1menuAppIframe")
+    action = ActionChains(driver)
+    # Cambiar al segundo y tercer iframe
+    switch_to_iframe(driver, "wcFrame3")
+    switch_to_iframe(driver, "RIPaneIFRAME1")
+
+    # Localizar el elemento objetivo y hacer clic
+    target_element = WebDriverWait(driver, 20).until(
+        EC.presence_of_element_located((By.XPATH, "//span[text()='Agrupación Hechos Económicos Interfaz Facturación']"))
+    )
+
+    # Forzar desplazamiento para visibilidad
+    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", target_element)
+    time.sleep(1)  # Esperar un momento después del desplazamiento
+    
+    # Verificar si el elemento está visible
+    if target_element.is_displayed():
+        try:
+            # Intentar clic con ActionChains
+            action.move_to_element(target_element).click().perform()
+            print("¡Open OneWorld: Control Agrupación hechos!")
+        except ElementClickInterceptedException:
+            print("Elemento bloqueado por otro elemento, intentando clic con JavaScript.")
+            # Forzar clic con JavaScript
+            driver.execute_script("arguments[0].click();", target_element)
+    else:
+        print("El elemento no es interactivo o está oculto.")
+
+#           OCHO
+#       ██████   ███     
+#      ██    ██   ██     
+#      ██    ██   ██     
+#      ██    ██   ██     
+#       ██████   ████ 
+
+# ------------------------------------------------
+
+def navigate_gen_movimiento(driver):
+    """Navega a la vista de Control Archivos Cargados en la plataforma sin ir al tab3"""
+    # Cambiar al primer iframe
+    switch_to_iframe(driver, "e1menuAppIframe")
+    action = ActionChains(driver)
+    # Cambiar al segundo y tercer iframe
+    switch_to_iframe(driver, "wcFrame3")
+    switch_to_iframe(driver, "RIPaneIFRAME1")
+
+    # Localizar el elemento objetivo y hacer clic
+    target_element = WebDriverWait(driver, 20).until(
+        EC.presence_of_element_located((By.XPATH, "//span[text()='Generar Movimiento Contable Interfaz Facturación']"))
+    )
+
+    # Forzar desplazamiento para visibilidad
+    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", target_element)
+    time.sleep(1)  # Esperar un momento después del desplazamiento
+    
+    # Verificar si el elemento está visible
+    if target_element.is_displayed():
+        try:
+            # Intentar clic con ActionChains
+            action.move_to_element(target_element).click().perform()
+            print("¡Open OneWorld: Generar Movimiento Contable Interfaz Facturación!")
+        except ElementClickInterceptedException:
+            print("Elemento bloqueado por otro elemento, intentando clic con JavaScript.")
+            # Forzar clic con JavaScript
+            driver.execute_script("arguments[0].click();", target_element)
+    else:
+        print("El elemento no es interactivo o está oculto.")
+
+#           OCHO
+#       ██████   ███     
+#      ██    ██   ██     
+#      ██    ██   ██     
+#      ██    ██   ██     
+#       ██████   ████ 
+
+# ------------------------------------------------
+
+def navigate_AD(driver):
+    """Navega a la vista de Control Archivos Cargados en la plataforma sin ir al tab3"""
+    # Cambiar al primer iframe
+    switch_to_iframe(driver, "e1menuAppIframe")
+    action = ActionChains(driver)
+    # Cambiar al segundo y tercer iframe
+    switch_to_iframe(driver, "wcFrame3")
+    switch_to_iframe(driver, "RIPaneIFRAME1")
+
+    # Localizar el elemento objetivo y hacer clic
+    target_element = WebDriverWait(driver, 20).until(
+        EC.presence_of_element_located((By.XPATH, "//span[text()='Revisiones de AD (Batch)']"))
+    )
+
+    # Forzar desplazamiento para visibilidad
+    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", target_element)
+    time.sleep(1)  # Esperar un momento después del desplazamiento
+    
+    # Verificar si el elemento está visible
+    if target_element.is_displayed():
+        try:
+            # Intentar clic con ActionChains
+            action.move_to_element(target_element).click().perform()
+            print("¡Open OneWorld: Revisiones de AD (Batch)!")
+        except ElementClickInterceptedException:
+            print("Elemento bloqueado por otro elemento, intentando clic con JavaScript.")
+            # Forzar clic con JavaScript
+            driver.execute_script("arguments[0].click();", target_element)
+    else:
+        print("El elemento no es interactivo o está oculto.")
+
+#           OCHO
+#       ██████   ███     
+#      ██    ██   ██     
+#      ██    ██   ██     
+#      ██    ██   ██     
+#       ██████   ████ 
+
+# ------------------------------------------------
+
+def navigate_revision_comprobante(driver):
+    """Navega a la vista de Control Archivos Cargados en la plataforma sin ir al tab3"""
+    # Cambiar al primer iframe
+    switch_to_iframe(driver, "e1menuAppIframe")
+    action = ActionChains(driver)
+    # Cambiar al segundo y tercer iframe
+    switch_to_iframe(driver, "wcFrame3")
+    switch_to_iframe(driver, "RIPaneIFRAME1")
+
+    # Localizar el elemento objetivo y hacer clic
+    target_element = WebDriverWait(driver, 20).until(
+        EC.presence_of_element_located((By.XPATH, "//span[text()='Revisión del Comprobante']"))
+    )
+
+    # Forzar desplazamiento para visibilidad
+    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", target_element)
+    time.sleep(1)  # Esperar un momento después del desplazamiento
+    
+    # Verificar si el elemento está visible
+    if target_element.is_displayed():
+        try:
+            # Intentar clic con ActionChains
+            action.move_to_element(target_element).click().perform()
+            print("¡Open OneWorld: Revisión del Comprobante!")
+        except ElementClickInterceptedException:
+            print("Elemento bloqueado por otro elemento, intentando clic con JavaScript.")
+            # Forzar clic con JavaScript
+            driver.execute_script("arguments[0].click();", target_element)
+    else:
+        print("El elemento no es interactivo o está oculto.")
+
+#           OCHO
+#       ██████   ███     
+#      ██    ██   ██     
+#      ██    ██   ██     
+#      ██    ██   ██     
+#       ██████   ████ 
+
+# ------------------------------------------------

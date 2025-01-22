@@ -93,7 +93,8 @@ def main():
         # Escribir 8 en Estado de Registro
         input_estado_registro(driver, summary_steps)
         summary_steps.append(f"→ Escribir 8 en Estado de Registro")
-        #Se rompe el ciclo
+
+        #falta: proceso por si aparece algún registro de error. Borrar(Supr) el NIT y darle guardar.
 
         # Volver al inicio
         navigate_home(driver)
@@ -108,9 +109,10 @@ def main():
 
         # abrir_formato_registro_excel(driver)
 
-        navigate_home(driver)
-        summary_steps.append("→ Volver al inicio")
-
+        #Obtener de la tabla (fase, fecha contable, número de lote, fecha gen archivo)
+        #Asignar por defecto unos valores de Número de lote
+        #Ir al excel de formato registro batch
+        # colocar el número en la celda correspondiente de la hoja correspondiente
 
         # ================= PASO 4 AGRUPACIÓN DE HECHOS ECONOMICOS =================
 
@@ -118,42 +120,49 @@ def main():
         summary_steps.append("→ Navegación a la vista de Agrupación Hechos Económicos Interfaz Facturación.")
         clic_boton_envio(driver)
 
-           # Volver al inicio
-        navigate_home(driver)
-        summary_steps.append("→ Volver al inicio")
 
+        #Como después de las validaciones anteriores no encuentra errores posibles pasa la interfaz de una parte de JDEdwards a una parte temporal
+     
+        # click en envio
+        #colocar número de bash dar click en el chulito
+        #dar click en X
+        #aquí debería haber una verificación de los archivos del sidebar
 
         # ================= PASO 5 GENERAR MOVIMIENTO CONTABLE IF =================
 
         # Verificar que todo lo anterior esté correcto
         navigate_gen_movimiento(driver)
         summary_steps.append("→ Navegación a la vista de Generar Movimiento Contable Interfaz Facturación.")
-        # Volver al inicio
-        navigate_home(driver)
-        summary_steps.append("→ Volver al inicio")
+        # Entrar a Generar Movimiento Contable...
+        # dar click en envío
+        # colocar el número de lote que tenemos en número de bacth
+        # abrir un pdf de reporte para generar dinámica contable
+        # En el pdf hay un númeor de batch, asignarlo a una variable
+        # Bajar hasta el final del archivo (al menos solo visualemnte)
+        # Crear y asignar un booleano que sea true si debitos y creditos coinciden
+        # cerrar el pdf
+        # Aquí tendrían que venir los flujos con power automate para enviar una notificación en caso de ver uno de los errores en el reporte para generar dinámcia contbale
+
 
         # ================= PASO 6 REVISIONES AD BATCH =================
 
         navigate_AD(driver)
         summary_steps.append("→ Navegación a la vista de Revisiones de AD (Batch).")
 
-        # Volver al inicio
-        navigate_home(driver)
-        summary_steps.append("→ Volver al inicio")
-
+        #anotar el usuario en ID de usuario
+        #darle a buscar para que aparezcan todos los pendientes
+        #salir de la vista
 
         # ================= PASO 7 REVISION DEL COMPROBANTE =================
 
         navigate_revision_comprobante(driver)
         summary_steps.append("→ Navegación a la vista de Revisión del Comprobante")
-        # Volver al inicio
-        navigate_home(driver)
-        summary_steps.append("→ Volver al inicio")
-
+        #Poner el usuario y darlle click a sin contabilizar
+        #darle click a la lupa
 
         # ================= PASO 9 =================
 
-        # Hacer una verificación generla y generar un reporte de la calidad del paso a paso
+        #Hacer una verificación generla y generar un reporte de la calidad del paso a paso
 
         # ================= PASO 11 =================
 
@@ -173,7 +182,7 @@ def main():
     finally:
         summary_steps.append("FIN. Cierre del navegador.")
         # Guardar resumen final
-        summary_path = r"D:\OneDrive - Grupo EPM\Descargas\ResumenesIF\Resumen004.txt"
+        summary_path = r"D:\OneDrive - Grupo EPM\Descargas\ResumenesIF\Resumen003.txt"
         print(f"Resumen generado y guardado aquí {summary_path}")
         with open(summary_path, "w", encoding="utf-8") as file:
             file.write("\n".join(summary_steps))

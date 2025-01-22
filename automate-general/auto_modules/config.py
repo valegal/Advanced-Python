@@ -18,14 +18,14 @@ def setup_driver():
 
     # Redirigir los logs de Chrome para evitar mostrar mensajes de SSL en consola
     options.add_argument('--disable-logging')
-    options.add_argument('--log-level=3')  # Esto suprime los mensajes de log
+    # options.add_argument('--log-level=3')  # Esto suprime los mensajes de log
 
     # Crear el driver de Selenium con la configuración de opciones
     service = Service(executable_path=CHROMEDRIVER_PATH)
     driver = webdriver.Chrome(service=service, options=options)
 
     # Ajustar ventana del navegador
-    driver.set_window_position(1920, 0)
+    driver.set_window_position(0, -1080)
     driver.maximize_window()
     
     return driver
