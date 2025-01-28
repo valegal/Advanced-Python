@@ -1,0 +1,28 @@
+#--------  SAC PROCESS OUTPUTS  --------
+Navegación hasta procesos administrativos completada con éxito.
+INICIO generar interfaz 1
+Ahora estamos en Generación para las fases de ventas (1 a 3) Tablas
+FIN generar interfaz 1
+INICIO generar interfaz 2
+Ahora estamos en Generación para las fases de ventas (1 a 3) Tablas
+FIN generar interfaz 2
+INICIO generar interfaz 3
+Ahora estamos en Generación para las fases de ventas (1 a 3) Tablas
+FIN generar interfaz 3
+INICIO generar interfaz 4
+Ahora estamos en Generación fase de recaudos Tablas
+FIN generar interfaz 4
+INICIO generar interfaz 5
+Ahora estamos en Generación para la fase de cástigo (5) Tablas
+FIN generar interfaz 5
+#----- RESULTADOS run sac_process.py
+Número de registros creados: 707 en la fase1
+Proceso ejecutado existosamente. en la fase1
+Número de registros creados: 0 en la fase2
+Proceso ejecutado existosamente. en la fase2
+Número de registros creados: 2 en la fase3
+Proceso ejecutado existosamente. en la fase3
+Número de registros creados: 530 en la fase4
+Proceso ejecutado existosamente. en la fase4
+Actualizados -3 registros. en la fase5
+Proceso ejecutado existosamente. en la fase5

@@ -16,7 +16,7 @@ summary_steps = []
 def main():
     driver = setup_driver()
     try:
-        summary_steps.append("➡️ INICIO del proceso Interfaz de Facturación")
+        summary_steps.append("➡️ INICIO ➡️")
 
         # Realizar el login
         login(driver, "EMONTANC", "edmcESSA03**")
@@ -98,6 +98,7 @@ def main():
         # Volver al inicio
         navigate_home(driver)
         summary_steps.append("→ Volver al inicio")
+        # abrir fr
 
         # ================= PASO 3 VERIFICAR EL CONTROL DE LOS ARCHIVOS QUE SE ACABAN DE SUBIR =================
         # Navegar a la vista Control Archivos Cargados
@@ -108,9 +109,8 @@ def main():
 
         # abrir_formato_registro_excel(driver)
 
-        navigate_home(driver)
+        navigate_home(driver) 
         summary_steps.append("→ Volver al inicio")
-
 
         # ================= PASO 4 AGRUPACIÓN DE HECHOS ECONOMICOS =================
 
@@ -121,7 +121,6 @@ def main():
            # Volver al inicio
         navigate_home(driver)
         summary_steps.append("→ Volver al inicio")
-
 
         # ================= PASO 5 GENERAR MOVIMIENTO CONTABLE IF =================
 
