@@ -11,7 +11,7 @@ from selenium.webdriver.support.ui import Select
 import time
 from captura import capturar_output
 captura = capturar_output()
-fecha = "26/01/2025"
+fecha = "28/01/2025"
 
 # Configuración del driver
 website_sac = "https://essa-ws12.essa.com.co:9095/GEN/Vistas/Login/LOGIN_GEN.aspx"
@@ -319,27 +319,12 @@ for fase, ids in mensaje_ids.items():
         except Exception as e:
             print(f"Error al obtener mensaje {idx} para la fase {fase}: {e}")
 
-#----- INICIO PROCESO JD Edwards -----
-
-# jde_url = "https://epm-vws20c.corp.epm.com.co/jde/E1Menu.maf?jdeowpBackButtonProtect=PROTECTED"
-# driver.execute_script(f"window.open('{jde_url}', '_blank');")
-# driver.close()
-
-# # Cambiar el foco al nuevo tab
-# driver.switch_to.window(driver.window_handles[-1])
-# print("Nueva pestaña abierta y la pestaña anterior ha sido cerrada.")
-# driver.implicitly_wait(10)
-
-# input_login_jde = driver.find_element(By.ID, "User")
-# input_login_jde.send_keys("Hola")
-# input_login_jde = driver.find_element(By.ID, "Password")
-# input_login_jde.send_keys("Buenas")
-
 # Guardar la salida capturada en un archivo
 sys.stdout = sys.__stdout__  # Restaurar la salida estándar
 with open("sac_process_console.txt", "w") as file_txt:
     file_txt.write(captura.texto)  # Escribir el contenido capturado
 
-# Pausa para mantener la ventana abierta
-input("Presiona Enter para cerrar la ventana...")
+# Cerrar el navegador automáticamente
+print("Cerrando el navegador...")
+driver.quit()
 
