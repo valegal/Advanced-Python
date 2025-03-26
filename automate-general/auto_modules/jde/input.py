@@ -2,12 +2,12 @@ from navigation import switch_to_iframe
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
-from config import fecha 
+from config import fecha_con
 import time
 
 # ---------------------------------------------------
 
-def input_estado_registro(driver, summary_steps):
+def input_estado_registro(driver):
     """Navega hasta el input 'Estado Registro' y escribe '8'"""
     try:
         # Volver al iframe `e1menuAppIframe`
@@ -35,14 +35,11 @@ def input_estado_registro(driver, summary_steps):
         )
         buscar_icon.click()
         print("Clic en el icono de búsqueda realizado.")
-        summary_steps.append("→ Realizar búsqueda de errores en Hechos Económicos IF")
-
         # Esperar un momento para la ejecución del proceso
         time.sleep(10)
 
     except Exception as e:
         print(f"Error durante la ejecución de write_run_estado_registro: {e}")
-        summary_steps.append(f"Error: {e}")
 
 
 # ---------------------------------------------------
@@ -59,7 +56,7 @@ def input_fecha_contable(driver):
         # Limpia el campo de texto (si tiene un valor predeterminado)
         campo_fecha.clear()
         # Ingresa la fecha contable desde la configuración
-        campo_fecha.send_keys(fecha)
+        campo_fecha.send_keys(fecha_con)
         print("Fecha contable ingresada con éxito.")
     except Exception as e:
         print(f"Error al intentar ingresar la fecha contable: {e}")

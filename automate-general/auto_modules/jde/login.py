@@ -12,4 +12,4 @@ def login(driver, username, password):
     driver.find_element(By.XPATH, "//input[@value='Conexión']").click()
 
     # Esperar unos segundos para asegurar la carga
-    time.sleep(5)
+    time.sleep(10)

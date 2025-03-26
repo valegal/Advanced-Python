@@ -4,9 +4,12 @@ from selenium.webdriver.chrome.options import Options
 import logging
 
 # Configuración general
-CHROMEDRIVER_PATH = r"C:\Users\vgaleanc\Escritorio\chromedriver-win64\chromedriver.exe"
+CHROMEDRIVER_PATH = r"C:\Users\vgaleanc\Escritorio\chromedriver\chromedriver-win64\chromedriver.exe"
 WEBSITE_URL_JDE = "https://epm-vws20c.corp.epm.com.co/jde/E1Menu.maf"
-fecha = "20150914"
+fecha_gen = "20250318"
+fecha_con = "*20250311*"
+fecha_con_lib = "20250310"
+RUTA_ARCHIVO_BREAK = r"D:\OneDrive - Grupo EPM\Documentos\fallos"
 
 def setup_driver():
     """Configura y retorna el driver de Selenium."""
@@ -25,7 +28,7 @@ def setup_driver():
     driver = webdriver.Chrome(service=service, options=options)
 
     # Ajustar ventana del navegador
-    driver.set_window_position(0, -1080)
+    # driver.set_window_position(0, -1080)
     driver.maximize_window()
     
     return driver
