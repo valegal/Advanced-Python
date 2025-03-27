@@ -5,6 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import ElementClickInterceptedException
 import time
+from utils import take_screenshot
 
 # ------------------------------------------------
 def switch_to_iframe(driver, iframe_id):

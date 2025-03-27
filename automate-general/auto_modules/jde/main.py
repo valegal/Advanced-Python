@@ -10,129 +10,106 @@ from verify import verify_estado_trabajo, verify_control_archivos
 from button import clic_boton_envio, clic_boton_lupa
 from actions import action_cargar_fases, agrupar, generar_movimiento_contable
 from search import search_estado_registro
+from goto import goto_verificar
 import time
 
 def main():
     driver = setup_driver()
-    try:
+   # try:
 
-        # Realizar el login
-        login(driver, "EMONTANC", "edmcESSA07**")
+    # Realizar el login
+    login(driver, "EMONTANC", "edmcESSA07**")
 
-        # ================= PASO 1 CARGA ARCHIVO IF =================
-        # Navegar a la vista
-        #navigate_to_carga_archivo(driver)
+    goto_verificar(driver)
 
-        # Cargar las 5 fases
-        # action_cargar_fases(driver, fecha_con)
 
-        # Volver al inicio
-        #navigate_home(driver)
+    driver.quit()
 
-        # Verificación del estado del trabajo para las 5 cargas
-        # verify_estado_trabajo(driver)
+    # ================= PASO 1 CARGA ARCHIVO IF =================
+    # Navegar a la vista
+    #navigate_to_carga_archivo(driver)
 
-        # ================= PASO 2 VERIFICAR ERRORES 'REVISIÓN HECHOS ECONÓMICOS' =================
+    # Cargar las 5 fases
+    # action_cargar_fases(driver, fecha_con)
 
-        time.sleep(10)
-        # navigate_to_revision_hechos(driver)
-        # time.sleep(10)
-        # search_estado_registro(driver)
-        # time.sleep(10)
+    # Volver al inicio
+    #navigate_home(driver)
 
-        # ================= PASO 3 CONTROL DE LOS ARCHIVOS QUE SE ACABAN DE SUBIR =================
+    # Verificación del estado del trabajo para las 5 cargas
+    # verify_estado_trabajo(driver)
+
+    # ================= PASO 2 VERIFICAR ERRORES 'REVISIÓN HECHOS ECONÓMICOS' =================
+
+    # time.sleep(10)
+    # navigate_to_revision_hechos(driver)
+    # time.sleep(10)
+    # search_estado_registro(driver)
+    # time.sleep(10)
+
+    # ================= PASO 3 CONTROL DE LOS ARCHIVOS QUE SE ACABAN DE SUBIR =================
+
+    # navigate_control_archivos_cargados(driver)
+    # time.sleep(3)
+
+    # # Verificar control de archivos y obtener los datos
+    # resultado = verify_control_archivos(driver)
+
+    # # Procesar datos para batchcarga
+    # values = list(resultado.values())
+    # batchcarga = {values[i + 1]: values[i] for i in range(0, len(values), 2)}
+    # numbatchcarga = len(batchcarga)
+
+    # # Guardar resultados en archivo de texto
+    # ruta_archivo = "D:/OneDrive - Grupo EPM/Descargas/resultado_main.txt"
+    # with open(ruta_archivo, "w") as file:
+    #     for key, value in batchcarga.items():
+    #         file.write(f"{key} = {value}\n")
     
-        # navigate_control_archivos_cargados(driver)
-        # time.sleep(3)
+    # print(f"📁 Archivo guardado en: {ruta_archivo}")
 
-        # # Verificar control de archivos y obtener los datos
-        # resultado = verify_control_archivos(driver)
+    # navigate_home(driver)
+    # time.sleep(3)
 
-        # # Procesar datos para batchcarga
-        # values = list(resultado.values())
-        # batchcarga = {values[i + 1]: values[i] for i in range(0, len(values), 2)}
-        # numbatchcarga = len(batchcarga)
+    # ================= PASO 4 AGRUPACIÓN DE HECHOS ECONOMICOS =================
 
-        # # Guardar resultados en archivo de texto
-        # ruta_archivo = "D:/OneDrive - Grupo EPM/Descargas/resultado_main.txt"
-        # with open(ruta_archivo, "w") as file:
-        #     for key, value in batchcarga.items():
-        #         file.write(f"{key} = {value}\n")
-        
-        # print(f"📁 Archivo guardado en: {ruta_archivo}")
+    # for _ in range(numbatchcarga):
+    #     navigate_agrupacion_hechos(driver)
+    #     time.sleep(3)
+    #     agrupar(driver, list(batchcarga.values())[_])
+    #     navigate_home(driver)
+    #     time.sleep(5)
 
-        batchcarga = {
-            # 1: 29835,
-            # 2: 29837,
-            # 3: 29838,
-            # 4: 29843,
-            # 5: 29842,
-            # 6: 29844,
-            # 7: 29852,
-            8: 29848,
-            9: 29886,
-            10: 29887,
-            11: 29857,
-            12: 29858,
-            13: 29860,
-            14: 29862,
-            15: 29863,
-            16: 29869,
-            17: 29867,
-            18: 29866,
-            19: 29870,
-            20: 29872,
-            21: 29873,
-            22: 29875,
-            23: 29877,
-            24: 29878,
-            25: 29880,
-            26: 29882,
-            27: 29888
-        }
+    # # ================= PASO 5 GENERAR MOVIMIENTO CONTABLE IF =================
 
-        numbatchcarga = len(batchcarga)
+    # for _ in range(numbatchcarga):
+    #     navigate_generar_mov_contable(driver)
+    #     time.sleep(3)
+    #     generar_movimiento_contable(driver, list(batchcarga.values())[_])
+    #     navigate_home(driver)
+    #     time.sleep(3)
 
-        navigate_home(driver)
-        time.sleep(3)
+    # ================= PASO 6 REVISIONES AD BATCH =================
 
-        # ================= PASO 4 AGRUPACIÓN DE HECHOS ECONOMICOS =================
 
-        # for _ in range(numbatchcarga):
-        #     navigate_agrupacion_hechos(driver)
-        #     time.sleep(3)
-        #     agrupar(driver, list(batchcarga.values())[_])
-        #     navigate_home(driver)
-        #     time.sleep(5)
 
-        # ================= PASO 5 GENERAR MOVIMIENTO CONTABLE IF =================
 
-        for _ in range(numbatchcarga):
-            navigate_generar_mov_contable(driver)
-            time.sleep(3)
-            generar_movimiento_contable(driver, list(batchcarga.values())[_])
-            navigate_home(driver)
-            time.sleep(3)
+#     # ================= PASO 7 REVISION DEL COMPROBANTE =================
 
-    #     # ================= PASO 6 REVISIONES AD BATCH =================
+#     # ================= PASO 9 =================
 
-    #     # ================= PASO 7 REVISION DEL COMPROBANTE =================
-
-    #     # ================= PASO 9 =================
-
-    #     # ================= PASO 11 =================
+#     # ================= PASO 11 =================
 
 
 
 # ---------------------------------------------------
     
-    except Exception as e:
-        error_message = f"Error durante la ejecución: {e}"
-        print(error_message)
-        take_screenshot(driver, "error_state.png")
+    # except Exception as e:
+    #     error_message = f"Error durante la ejecución: {e}"
+    #     print(error_message)
+    #     take_screenshot(driver, "error_state.png")
 
-    finally:
-        driver.quit()
+    # finally:
+    #     driver.quit()
 
 if __name__ == "__main__":
     main()

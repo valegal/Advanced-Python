@@ -6,25 +6,25 @@ import pdfplumber
 carpeta_pdf = r"D:\OneDrive - Grupo EPM\Descargas\reportes"
 archivo_salida = r"D:\OneDrive - Grupo EPM\Descargas\resultados.txt"
 
-# Expresiones regulares para extraer datos
-regex_agrupacion = re.compile(r'EMONTANC\s+\d+\s+\.\d+\s+\d+\s+\d+\s+[A-Z]\s+(\d+)')  # Agrupación
-regex_carga = re.compile(r'\d{7}\s+(\d{5})\s+\d{4}/\d{2}/\d{2}')  # Carga
-regex_fecha_contable = re.compile(r'(\d{4}/\d{2}/\d{2})')  # Fecha contable
-regex_debitos = re.compile(r'DEBITOS GENERAL\s+([\d,]+\.\d{2})')  # Débitos
-regex_creditos = re.compile(r'CREDITOS GENERAL\s+([\d,]+\.\d{2})-?')  # Créditos
+# Expresiones regulares mejoradas
+regex_agrupacion = re.compile(r'EMONTANC.*?\s(\d{5})')
+regex_carga = re.compile(r'(\d{5})\s+\d{4}/\d{2}/\d{2}')
+regex_fecha_contable = re.compile(r'(\d{4}/\d{2}/\d{2})\s+.*Asientos Interface Facturacion')
+regex_debitos = re.compile(r'DEBITOS GENERAL\s+([\d,]+\.\d{2})')
+regex_creditos = re.compile(r'CREDITOS GENERAL\s+([\d,]+\.\d{2})-?')
 
 def extraer_datos(pdf_path):
     try:
         with pdfplumber.open(pdf_path) as pdf:
             # Leer primera y última página
             primera_pagina = pdf.pages[0].extract_text()
-            ultima_pagina = pdf.pages[-1].extract_text()
+            ultima_pagina = pdf.pages[-1].extract_text() 
 
             if not primera_pagina or not ultima_pagina:
-                print(f"Advertencia: No se pudo extraer texto en {pdf_path}")
+                print(f"⚠ No se pudo extraer texto de {pdf_path}")
                 return None
 
-            # Buscar Agrupación, Carga y Fecha Contable en la primera página
+            # Buscar valores en la primera página
             agrupacion = regex_agrupacion.search(primera_pagina)
             carga = regex_carga.search(primera_pagina)
             fecha_contable = regex_fecha_contable.search(primera_pagina)
@@ -33,17 +33,17 @@ def extraer_datos(pdf_path):
             carga = carga.group(1) if carga else "N/A"
             fecha_contable = fecha_contable.group(1) if fecha_contable else "N/A"
 
-            # Buscar Débitos y Créditos en la última página
+            # Buscar Débitos y Créditos
             match_debitos = regex_debitos.search(ultima_pagina)
             match_creditos = regex_creditos.search(ultima_pagina)
 
             if not match_debitos or not match_creditos:
-                print(f"Advertencia: No se encontraron los valores en {pdf_path}")
+                print(f"⚠ No se encontraron valores en {pdf_path}")
                 return None
 
             debitos = match_debitos.group(1).replace(",", "")
             creditos = match_creditos.group(1).replace(",", "")
-
+            
             return {
                 "archivo": os.path.basename(pdf_path),
                 "agrupacion": agrupacion,
@@ -54,10 +54,10 @@ def extraer_datos(pdf_path):
             }
 
     except Exception as e:
-        print(f"Error al procesar {pdf_path}: {e}")
+        print(f"❌ Error en {pdf_path}: {e}")
         return None
 
-# Procesar todos los archivos y escribir resultados en el TXT
+# Procesar archivos y guardar resultados
 with open(archivo_salida, "w", encoding="utf-8") as salida:
     salida.write("Archivo | Agrupación | Carga | Fecha Contable | Débitos | Créditos\n")
     salida.write("-" * 100 + "\n")
