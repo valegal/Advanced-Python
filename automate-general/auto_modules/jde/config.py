@@ -6,9 +6,9 @@ import logging
 # Configuración general
 CHROMEDRIVER_PATH = r"C:\Users\vgaleanc\Escritorio\chromedriver\chromedriver-win64\chromedriver.exe"
 WEBSITE_URL_JDE = "https://epm-vws20c.corp.epm.com.co/jde/E1Menu.maf"
-fecha_gen = "20250318"
-fecha_con = "*20250311*"
-fecha_con_lib = "20250310"
+fecha_gen = "20250328"
+fecha_con = "20250326"
+fecha_con_lib = f"*{fecha_con}*"
 RUTA_ARCHIVO_BREAK = r"D:\OneDrive - Grupo EPM\Documentos\fallos"
 
 def setup_driver():

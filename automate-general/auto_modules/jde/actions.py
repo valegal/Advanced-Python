@@ -43,25 +43,26 @@ def action_cargar_fases(driver, fecha_con):
                 EC.presence_of_element_located((By.ID, "jdeGridData0_1.0"))
             )
             driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", tabla)
+
+            time.sleep(5)
             
             # Intentar hacer clic en la imagen de "Sin anexos" con reintentos
             intento = 0
             while intento < 3:
                 try:
-                    elemento_clic = tabla.find_element(
-                    By.XPATH, ".//td[@colindex='-2']//a/img[@title='Sin anexos']"
+                    elemento_clic = WebDriverWait(driver, 10).until(
+                        EC.element_to_be_clickable((By.XPATH, ".//td[@colindex='-2']//a/img[@title='Sin anexos']"))
                     )
                     ActionChains(driver).move_to_element(elemento_clic).click().perform()
                     break
                 except Exception:
                     intento += 1
                     time.sleep(1)
-            
-            time.sleep(2)
-            
+        
+            time.sleep(1)
             # Localizar y hacer clic en el botón "Ejecutar Carga"
             ejecutar_carga_button = WebDriverWait(driver, 20).until(
-                EC.element_to_be_clickable((By.ID, "C0_28"))
+                EC.element_to_be_clickable((By.XPATH, "//*[@id='G0_1_R0']/td[2]/div/a"))
             )
             ActionChains(driver).move_to_element(ejecutar_carga_button).click().perform()
             
@@ -72,13 +73,14 @@ def action_cargar_fases(driver, fecha_con):
             ok_icon.click()
             
             # Esperar 3 segundos antes de continuar con la siguiente fase
-            time.sleep(3)
+            
             
             print(f"Fase {fase} procesada correctamente.")
         except Exception as e:
             print(f"Error en la fase {fase}: {str(e)}")
             driver.save_screenshot(f"error_state_fase_{fase}.png")
     
+    time.sleep(100000000)
     # Finalizar volviendo a la vista home
     navigate_home(driver)
     time.sleep(4)

@@ -6,7 +6,7 @@ from utils import take_screenshot
 from utils import clasificar_tablas_por_procesado
 from config import fecha
 from input import input_estado_registro, input_fecha_contable
-from verify import verify_estado_trabajo, verify_control_archivos
+from jde.verify import verify_estado_trabajo, verify_control_archivos
 from button import clic_boton_envio, clic_boton_lupa
 from actions import action_cargar_fases
 from search import search_estado_registro

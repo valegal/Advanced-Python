@@ -13,6 +13,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import Select
+from ejecutar_jde import ejecutar_main_jde
 from config_sac import WEBSITE_SAC, DRIVER_PATH
 from login_sac import login_sac
 import time
@@ -21,6 +22,7 @@ import threading
 
 #------------ HASTA AQUÍ EL INICIO DE SESIÓN EN SAC ----------------
 def ejecutar_sac_process(fecha):
+    start_time = time.time() 
     print(f"Fecha seleccionada: {fecha}")
     captura = capturar_output()
     
@@ -39,38 +41,40 @@ def ejecutar_sac_process(fecha):
     procesos_element = driver.find_element(By.ID, "cphContenedorMenuSuperior_Menu_lbl10341")
     ActionChains(driver).move_to_element(procesos_element).perform()
     # Esperar a que el submenú de "Administrativos" aparezca
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "cphContenedorMenuSuperior_Menu_lbt10342")))
+    WebDriverWait(driver, 50).until(EC.presence_of_element_located((By.ID, "cphContenedorMenuSuperior_Menu_lbt10342")))
     administrativos_element = driver.find_element(By.ID, "cphContenedorMenuSuperior_Menu_lbt10342")
     administrativos_element.click()
-    time.sleep(5)
+    time.sleep(7)
 
     print("Navegación hasta procesos administrativos completada con éxito.")
 
-    # Encuentra la segunda página de la tabla Procesos y Reportes
-    segundaTablaProcesos = driver.find_element(By.XPATH, "//a[@href=\"javascript:__doPostBack('ctl00$ctl00$ContentPlaceHolder1$ContentPlaceHolder1$grcGenReportesCtrl$DgvReportes','Page$2')\"]")
+    # Encuentra la segunda página de la tabla Procesos y Reportes y espera hasta que sea visibe
+    segundaTablaProcesos = WebDriverWait(driver, 50).until(
+        EC.element_to_be_clickable((By.XPATH, "//a[@href=\"javascript:__doPostBack('ctl00$ctl00$ContentPlaceHolder1$ContentPlaceHolder1$grcGenReportesCtrl$DgvReportes','Page$2')\"]"))
+    )
     segundaTablaProcesos.click()
     time.sleep(3)
 
     #----- Inicio generar interfaz 1 -----
 
     # Espera explícita hasta que el enlace esté presente
-    faseVentas = WebDriverWait(driver, 10).until(
+    faseVentas = WebDriverWait(driver, 80).until(
         EC.presence_of_element_located((By.XPATH, "//a[@href=\"javascript:__doPostBack('ctl00$ctl00$ContentPlaceHolder1$ContentPlaceHolder1$grcGenReportesCtrl$DgvReportes','Select$1')\"]"))
     )
     faseVentas.click()
     time.sleep(3)
     des_rec = driver.find_element(By.ID, "ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_TxtDescripcion").text
-    print({des_rec})
+    print(des_rec)
     input_fecha_param = driver.find_element(By.ID, "ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_DgvParametros_TxtValor_0")
     input_fecha_param.click()
     input_fecha_param.send_keys(fecha)
 
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(80)
     input_fase_param = driver.find_element(By.ID, "ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_DgvParametros_TxtValor_1")
     input_fase_param.clear()
     input_fase_param.send_keys("1")
     # Ejecutar
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(80)
     boton_ejecutar = driver.find_element(By.ID, "ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_LbtGenerar")
     boton_ejecutar.click()
     # Ejecutar y cerrar
@@ -95,23 +99,23 @@ def ejecutar_sac_process(fecha):
     #----- Inicio generar interfaz 2 -----
 
     # Espera explícita hasta que el enlace esté presente
-    faseVentas = WebDriverWait(driver, 10).until(
+    faseVentas = WebDriverWait(driver, 80).until(
         EC.presence_of_element_located((By.XPATH, "//a[@href=\"javascript:__doPostBack('ctl00$ctl00$ContentPlaceHolder1$ContentPlaceHolder1$grcGenReportesCtrl$DgvReportes','Select$1')\"]"))
     )
     faseVentas.click()
     time.sleep(3)
     des_rec = driver.find_element(By.ID, "ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_TxtDescripcion").text
-    print({des_rec})
+    print(des_rec)
     input_fecha_param = driver.find_element(By.ID, "ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_DgvParametros_TxtValor_0")
     input_fecha_param.click()
     input_fecha_param.send_keys(fecha)
 
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(80)
     input_fase_param = driver.find_element(By.ID, "ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_DgvParametros_TxtValor_1")
     input_fase_param.clear()
     input_fase_param.send_keys("2")
     # Ejecutar
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(80)
     boton_ejecutar = driver.find_element(By.ID, "ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_LbtGenerar")
     boton_ejecutar.click()
     time.sleep(10)
@@ -136,23 +140,23 @@ def ejecutar_sac_process(fecha):
     #----- Inicio generar interfaz 3 -----
 
     # Espera explícita hasta que el enlace esté presente
-    faseVentas = WebDriverWait(driver, 10).until(
+    faseVentas = WebDriverWait(driver, 80).until(
         EC.presence_of_element_located((By.XPATH, "//a[@href=\"javascript:__doPostBack('ctl00$ctl00$ContentPlaceHolder1$ContentPlaceHolder1$grcGenReportesCtrl$DgvReportes','Select$1')\"]"))
     )
     faseVentas.click()
     time.sleep(3)
     des_rec = driver.find_element(By.ID, "ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_TxtDescripcion").text
-    print({des_rec})
+    print(des_rec)
     input_fecha_param = driver.find_element(By.ID, "ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_DgvParametros_TxtValor_0")
     input_fecha_param.click()
     input_fecha_param.send_keys(fecha)
 
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(80)
     input_fase_param = driver.find_element(By.ID, "ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_DgvParametros_TxtValor_1")
     input_fase_param.clear()
     input_fase_param.send_keys("3")
 
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(80)
     boton_ejecutar = driver.find_element(By.ID, "ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_LbtGenerar")
     boton_ejecutar.click()
     time.sleep(10)
@@ -188,18 +192,18 @@ def ejecutar_sac_process(fecha):
     faseRecaudos.click()
     time.sleep(3)
     des_rec = driver.find_element(By.ID, "ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_TxtDescripcion").text
-    print({des_rec})
+    print(des_rec)
 
     input_fecha_param = driver.find_element(By.ID, "ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_DgvParametros_TxtValor_0")
     input_fecha_param.click()
     input_fecha_param.send_keys(fecha)
 
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(80)
     input_fase_param = driver.find_element(By.ID, "ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_DgvParametros_TxtValor_1")
     input_fase_param.clear()
     input_fase_param.send_keys("4")
 
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(80)
     boton_ejecutar = driver.find_element(By.ID, "ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_LbtGenerar")
     boton_ejecutar.click()
     time.sleep(15)
@@ -230,7 +234,7 @@ def ejecutar_sac_process(fecha):
     faseCastigo.click()
     time.sleep(3)
     des_rec = driver.find_element(By.ID, "ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_TxtDescripcion").text
-    print({des_rec})
+    print(des_rec)
     input_fecha_param = driver.find_element(By.ID, "ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_DgvParametros_TxtValor_0")
     input_fecha_param.click()
     input_fecha_param.send_keys(fecha)
@@ -263,7 +267,7 @@ def ejecutar_sac_process(fecha):
     print("Se ha generdado 'Castigo' DX")
 
     #--------------------------------------
-    print("#----- RESULTADOS run sac_process.py")
+    print("\n#----- RESULTADOS run sac_process.py")
 
     mensaje_ids = {
         1: ["spaTextoMensaje1", "spaTextoMensaje2"],
@@ -290,7 +294,6 @@ def ejecutar_sac_process(fecha):
 
     #--------------------------------------
 
-    print("FIN generar interfaz 5")
 
     print("Cerrar sesión en SAC")
     time.sleep(5)
@@ -299,6 +302,17 @@ def ejecutar_sac_process(fecha):
         EC.presence_of_element_located((By.ID, "btnSalir")))
     driver.execute_script("arguments[0].scrollIntoView(true);", logout_button)
     WebDriverWait(driver, 50).until(EC.element_to_be_clickable((By.ID, "btnSalir"))).click()
+
+    # Medir tiempo de ejecución
+    end_time = time.time()
+    execution_time = end_time - start_time
+
+    minutes = int(execution_time // 60)
+    seconds = int(execution_time % 60)
+    formatted_time = f"{minutes}min {seconds}s"
+
+    print(f"Tiempo total de ejecución: {execution_time:.2f} segundos")
+    print(formatted_time)
 
     #----- IMPRIMIR RESULTADOS GENERACIÓN DE INTERFACES -----
 
@@ -316,64 +330,10 @@ def ejecutar_sac_process(fecha):
     with open(nombre_archivo, "w", encoding="utf-8") as file_txt:
         file_txt.write(f"Fecha de ejecución: {fecha}\n")
         file_txt.write(f"ID único: {random_number}\n\n")
-        file_txt.write("\n")
         file_txt.write(captura.texto)  # Escribir el contenido capturado
 
     time.sleep(2)
     print(f"Resumen guardado en: {nombre_archivo}")
     print("Cerrando el navegador...")
     driver.quit()
-
-def ejecutar_sac_process_con_cierre(fecha):
-    """Ejecuta el proceso en un hilo independiente y cierra la ventana después de unos segundos."""
-    thread = threading.Thread(target=ejecutar_sac_process, args=(fecha,))
-    thread.start()  # Inicia el hilo sin daemon=True para que continúe después de cerrar la ventana.
-    root.after(3000, root.destroy)  # Cierra la ventana en 3 segundos.
-
-if __name__ == "__main__":
-
-    root = tk.Tk()
-    root.title("    SAC Process")
-    root.geometry("500x350")  # Aumentamos el tamaño
-    root.configure(bg="white")  # Azul celeste de la paleta
-    root.resizable(False, False)
-
-    # Centrar en pantalla
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
-    x_coord = (screen_width - 500) // 2
-    y_coord = (screen_height - 350) // 2
-    root.geometry(f"500x350+{x_coord}+{y_coord}")
-
-    # Cambiar el icono de la ventana (requiere 'logo.ico' en la misma carpeta)
-    try:
-        root.iconbitmap("logo.ico")
-    except:
-        print("No se encontró el archivo logo.ico")
-
-    # Estilos
-    style = ttk.Style()
-    style.configure("TLabel", font=("Arial", 14, "bold"), background="white", foreground="#01085A")
-    style.configure("TButton", font=("Arial", 12), padding=6, background="#264796", foreground="#01085A")
-    style.configure("TEntry", font=("Arial", 12))
-
-    # Etiqueta principal
-    label_fecha = ttk.Label(root, text="Seleccione la fecha:")
-    label_fecha.pack(pady=(40, 5))
-
-    # Descripción más pequeña debajo
-    label_desc = ttk.Label(root, text="Primero escriba la fecha del día que desea generar las 5 fases para ejecutar el proceso de Interfaz de facturación en SAC:",
-                            font=("Arial", 9), wraplength=450, justify="center")
-    label_desc.pack(pady=(0, 10))
-
-    # Selector de fecha más grande y ancho
-    fecha_selector = DateEntry(root, width=18, background="#01085A", foreground="white",
-                            borderwidth=3, date_pattern="dd/mm/yyyy", font=("Arial", 12))
-    fecha_selector.pack(pady=10)
-
-    # Botón de ejecución
-    btn_ejecutar = ttk.Button(root, text="Ejecutar", command=lambda: ejecutar_sac_process_con_cierre(fecha_selector.get()))
-    btn_ejecutar.pack(pady=20)
-
-    # Ejecutar la ventana
-    root.mainloop()
+    ejecutar_main_jde()

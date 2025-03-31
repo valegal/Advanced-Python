@@ -14,48 +14,44 @@ regex_debitos = re.compile(r'DEBITOS GENERAL\s+([\d,]+\.\d{2})')
 regex_creditos = re.compile(r'CREDITOS GENERAL\s+([\d,]+\.\d{2})-?')
 
 def extraer_datos(pdf_path):
-    try:
-        with pdfplumber.open(pdf_path) as pdf:
-            # Leer primera y última página
-            primera_pagina = pdf.pages[0].extract_text()
-            ultima_pagina = pdf.pages[-1].extract_text() 
+    
+    with pdfplumber.open(pdf_path) as pdf:
+        # Leer primera y última página
+        primera_pagina = pdf.pages[0].extract_text()
+        ultima_pagina = pdf.pages[-1].extract_text() 
 
-            if not primera_pagina or not ultima_pagina:
-                print(f"⚠ No se pudo extraer texto de {pdf_path}")
-                return None
+        if not primera_pagina or not ultima_pagina:
+            print(f"⚠ No se pudo extraer texto de {pdf_path}")
+            return None
 
-            # Buscar valores en la primera página
-            agrupacion = regex_agrupacion.search(primera_pagina)
-            carga = regex_carga.search(primera_pagina)
-            fecha_contable = regex_fecha_contable.search(primera_pagina)
+        # Buscar valores en la primera página
+        agrupacion = regex_agrupacion.search(primera_pagina)
+        carga = regex_carga.search(primera_pagina)
+        fecha_contable = regex_fecha_contable.search(primera_pagina)
 
-            agrupacion = agrupacion.group(1) if agrupacion else "N/A"
-            carga = carga.group(1) if carga else "N/A"
-            fecha_contable = fecha_contable.group(1) if fecha_contable else "N/A"
+        agrupacion = agrupacion.group(1) if agrupacion else "N/A"
+        carga = carga.group(1) if carga else "N/A"
+        fecha_contable = fecha_contable.group(1) if fecha_contable else "N/A"
 
-            # Buscar Débitos y Créditos
-            match_debitos = regex_debitos.search(ultima_pagina)
-            match_creditos = regex_creditos.search(ultima_pagina)
+        # Buscar Débitos y Créditos
+        match_debitos = regex_debitos.search(ultima_pagina)
+        match_creditos = regex_creditos.search(ultima_pagina)
 
-            if not match_debitos or not match_creditos:
-                print(f"⚠ No se encontraron valores en {pdf_path}")
-                return None
+        if not match_debitos or not match_creditos:
+            print(f"⚠ No se encontraron valores en {pdf_path}")
+            return None
 
-            debitos = match_debitos.group(1).replace(",", "")
-            creditos = match_creditos.group(1).replace(",", "")
-            
-            return {
-                "archivo": os.path.basename(pdf_path),
-                "agrupacion": agrupacion,
-                "carga": carga,
-                "fecha_contable": fecha_contable,
-                "debitos": debitos,
-                "creditos": creditos
-            }
-
-    except Exception as e:
-        print(f"❌ Error en {pdf_path}: {e}")
-        return None
+        debitos = match_debitos.group(1).replace(",", "")
+        creditos = match_creditos.group(1).replace(",", "")
+        
+        return {
+            "archivo": os.path.basename(pdf_path),
+            "agrupacion": agrupacion,
+            "carga": carga,
+            "fecha_contable": fecha_contable,
+            "debitos": debitos,
+            "creditos": creditos
+        }
 
 # Procesar archivos y guardar resultados
 with open(archivo_salida, "w", encoding="utf-8") as salida:

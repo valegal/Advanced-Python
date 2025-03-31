@@ -39,7 +39,7 @@ def navigate_to_carga_archivo(driver):
 
     # Localizar el elemento objetivo y hacer clic
     target_element = WebDriverWait(driver, 150).until(
-        EC.presence_of_element_located((By.XPATH, "//span[text()='Carga Archivo Interfaz Facturación - Contabilidad']"))
+        EC.presence_of_element_located((By.XPATH, "//*[@id='pageContainer']/table/tbody[1]/tr/td/div[2]/table/tbody[5]/tr/td[1]/div/table/tbody/tr[2]/td[2]/div/table/tr[2]/td/span"))
     )
 
     # Forzar desplazamiento para visibilidad
@@ -211,7 +211,7 @@ def navigate_agrupacion_hechos(driver):
 
     # Localizar el elemento objetivo y hacer clic
     target_element = WebDriverWait(driver, 100).until(
-    EC.presence_of_element_located((By.XPATH, "//span[contains(text(), 'Agrupación Hechos Económicos Interfaz Facturación')]"))
+    EC.presence_of_element_located((By.XPATH, "//*[@id='pageContainer']/table/tbody[1]/tr/td/div[2]/table/tbody[2]/tr/td[2]/div/table/tbody/tr[2]/td[2]/div/table/tr[2]/td/span"))
     )
 
     # Forzar desplazamiento para visibilidad
@@ -258,7 +258,7 @@ def navigate_generar_mov_contable(driver):
 
     # Localizar el elemento objetivo y hacer clic
     target_element = WebDriverWait(driver, 100).until(
-    EC.presence_of_element_located((By.XPATH, "//span[contains(text(), 'Generar Movimiento Contable Interfaz Facturación')]"))
+    EC.presence_of_element_located((By.XPATH, "//*[@id='pageContainer']/table/tbody[1]/tr/td/div[2]/table/tbody[2]/tr/td[3]/div/table/tbody/tr[2]/td[2]/div/table/tr[2]/td/span"))
     )
 
     # Forzar desplazamiento para visibilidad

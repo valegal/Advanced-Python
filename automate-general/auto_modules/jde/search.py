@@ -68,6 +68,14 @@ def search_estado_registro(driver):
                     EC.presence_of_element_located((By.ID, "C0_36"))
                 )
                 input_nit.clear()
+
+                time.sleep(2)
+                
+                if input_nit.get_attribute("value"):
+
+                    print("⚠️ El input NIT no se pudo borrar, pasando al siguiente.")
+                    continue  # Pasa al siguiente radio button
+                
                 print("✅ Se borró el contenido del input FNit Suscriptor.")
 
                 boton_ok = WebDriverWait(driver, 50).until(
