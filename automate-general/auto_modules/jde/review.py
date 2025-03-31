@@ -41,7 +41,7 @@ def review_pdfs(driver, reportes, res_carga):
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "e1menuAppIframe")))
     driver.switch_to.frame(driver.find_element(By.ID, "e1menuAppIframe"))
 
-    for i in range(reportes):
+    for i in range(reportes - 1, -1, -1):  
         # Esperar a que el elemento esté presente y visible
         tarea_element = WebDriverWait(driver, 10).until(
             EC.visibility_of_element_located((By.XPATH, f"//*[@id='G0_1_R{i}']/td[1]/div/input"))

@@ -30,8 +30,6 @@ def search_estado_registro(driver):
         )
         time.sleep(5)
 
-        #print(driver.page_source)
-
         # Buscar los radio buttons dentro de JSSelectGrid
         radio_buttons = WebDriverWait(driver, 50).until(
         EC.visibility_of_all_elements_located((By.XPATH, "//input[@type='radio' and @name='grs0_1']"))
@@ -76,7 +74,7 @@ def search_estado_registro(driver):
                     print("⚠️ El input NIT no se pudo borrar, pasando al siguiente.")
                     continue  # Pasa al siguiente radio button
                 
-                print("✅ Se borró el contenido del input FNit Suscriptor.")
+                print("✅ Se borró el contenido del input NIT Suscriptor.")
 
                 boton_ok = WebDriverWait(driver, 50).until(
                     EC.element_to_be_clickable((By.ID, "hc_OK"))
@@ -85,7 +83,6 @@ def search_estado_registro(driver):
                 actions.move_to_element(boton_ok).double_click().perform()
                 print("🖱️ Doble clic en el botón OK realizado.")
                 time.sleep(2)
-
 
             print("✅ Se procesaron todos los radio buttons correctamente.")
         else:
@@ -102,14 +99,11 @@ def search_estado_registro(driver):
         WebDriverWait(driver, 20).until(
             EC.presence_of_element_located((By.CLASS_NAME, "JSSelectGrid"))
         )
-        time.sleep(5)
-        
-        navigate_home(driver)
+        time.sleep(3)
 
     except Exception as e:
         print(f"❌ Error: {str(e)}")
         navigate_home(driver)
 
     finally:
-        time.sleep(3)
         print("🔄 Proceso de revisión de hechos económicos finalizado.")

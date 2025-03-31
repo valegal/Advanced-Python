@@ -62,7 +62,7 @@ def action_cargar_fases(driver, fecha_con):
             time.sleep(1)
             # Localizar y hacer clic en el botón "Ejecutar Carga"
             ejecutar_carga_button = WebDriverWait(driver, 20).until(
-                EC.element_to_be_clickable((By.XPATH, "//*[@id='G0_1_R0']/td[2]/div/a"))
+                EC.element_to_be_clickable((By.XPATH, "//*[@id='C0_28']"))
             )
             ActionChains(driver).move_to_element(ejecutar_carga_button).click().perform()
             
@@ -73,14 +73,12 @@ def action_cargar_fases(driver, fecha_con):
             ok_icon.click()
             
             # Esperar 3 segundos antes de continuar con la siguiente fase
-            
-            
+            time.sleep(3)
             print(f"Fase {fase} procesada correctamente.")
         except Exception as e:
             print(f"Error en la fase {fase}: {str(e)}")
             driver.save_screenshot(f"error_state_fase_{fase}.png")
     
-    time.sleep(100000000)
     # Finalizar volviendo a la vista home
     navigate_home(driver)
     time.sleep(4)
@@ -112,16 +110,14 @@ def agrupar(driver, numero):
     # Paso 3: Buscar el botón OK, mover el cursor y hacer clic
     boton_ok = driver.find_element(By.XPATH, "//*[@id='hc_Select']")
     ActionChains(driver).move_to_element(boton_ok).click().perform()
-    
-    # Esperar 10 segundos antes del siguiente paso
-    time.sleep(10)
+
+    time.sleep(7)
     
     # Paso 4: Buscar el otro botón OK, mover el cursor y hacer clic
     boton_final = driver.find_element(By.XPATH, "//*[@id='hc_OK']")
     ActionChains(driver).move_to_element(boton_final).click().perform()
-    
-    # Esperar 15 segundos antes de continuar
-    time.sleep(15)
+
+    time.sleep(8)
     
     print(f"Proceso de agrupación finalizado para {numero}.")
 

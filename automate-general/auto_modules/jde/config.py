@@ -9,7 +9,7 @@ WEBSITE_URL_JDE = "https://epm-vws20c.corp.epm.com.co/jde/E1Menu.maf"
 fecha_gen = "20250328"
 fecha_con = "20250326"
 fecha_con_lib = f"*{fecha_con}*"
-RUTA_ARCHIVO_BREAK = r"D:\OneDrive - Grupo EPM\Documentos\fallos"
+EXCEL_PATH = r"D:\OneDrive - Grupo EPM\Documentos\InterfazFacturacion\07.  FFN014-V1-Formato Registro BATCH-MARZO.xlsx"
 
 def setup_driver():
     """Configura y retorna el driver de Selenium."""

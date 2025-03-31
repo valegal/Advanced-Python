@@ -6,14 +6,13 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from navigation import switch_to_iframe, navigate_home
 from selenium.webdriver.common.keys import Keys
-from config import fecha_con_lib, fecha_con
-
+from config import fecha_con, EXCEL_PATH
 
 #---------------------------------------------------------
 
 def update_excel_with_lotes(res_carga):
     # Ruta del archivo Excel
-    excel_path = r"D:\OneDrive - Grupo EPM\Documentos\InterfazFacturacion\07.  FFN014-V1-Formato Registro BATCH-MARZO.xlsx"
+    excel_path = EXCEL_PATH
     
     # Cargar el archivo Excel
     wb = openpyxl.load_workbook(excel_path)

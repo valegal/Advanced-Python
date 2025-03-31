@@ -39,7 +39,7 @@ def navigate_to_carga_archivo(driver):
 
     # Localizar el elemento objetivo y hacer clic
     target_element = WebDriverWait(driver, 150).until(
-        EC.presence_of_element_located((By.XPATH, "//*[@id='pageContainer']/table/tbody[1]/tr/td/div[2]/table/tbody[5]/tr/td[1]/div/table/tbody/tr[2]/td[2]/div/table/tr[2]/td/span"))
+        EC.presence_of_element_located((By.XPATH, "//*[@id='pageContainer']/table/tbody[1]/tr/td/div[2]/table/tbody[5]/tr/td[1]/div/table/tbody/tr[2]/td[2]/div/table"))
     )
 
     # Forzar desplazamiento para visibilidad
@@ -84,7 +84,7 @@ def navigate_to_revision_hechos(driver):
 
     # Localizar el elemento objetivo y hacer clic
     target_element = WebDriverWait(driver, 50).until(
-        EC.presence_of_element_located((By.XPATH, "//span[text()='Revisión Hechos Económicos Interfaz Facturación']"))
+        EC.presence_of_element_located((By.XPATH, "//*[@id='pageContainer']/table/tbody[1]/tr/td/div[2]/table/tbody[1]/tr/td[3]/div/table/tbody/tr[2]/td[2]"))
     )
 
     # Forzar desplazamiento para visibilidad
@@ -211,7 +211,7 @@ def navigate_agrupacion_hechos(driver):
 
     # Localizar el elemento objetivo y hacer clic
     target_element = WebDriverWait(driver, 100).until(
-    EC.presence_of_element_located((By.XPATH, "//*[@id='pageContainer']/table/tbody[1]/tr/td/div[2]/table/tbody[2]/tr/td[2]/div/table/tbody/tr[2]/td[2]/div/table/tr[2]/td/span"))
+    EC.presence_of_element_located((By.XPATH, "//*[@id='pageContainer']/table/tbody[1]/tr/td/div[2]/table/tbody[2]/tr/td[2]/div/table/tbody/tr[2]/td[2]/div/table"))
     )
 
     # Forzar desplazamiento para visibilidad
@@ -288,29 +288,35 @@ def navigate_generar_mov_contable(driver):
 # ------------------------------------------------
 
 def navigate_AD(driver):
-    """Navega a la vista de Control Archivos Cargados en la plataforma sin ir al tab3"""
+    """Navega a la vista de Revisiones de AD (Batch)"""
     # Cambiar al primer iframe
     switch_to_iframe(driver, "e1menuAppIframe")
+
+    # Localizar y hacer clic en la pestaña `tab3`
+    tab_cp = WebDriverWait(driver, 150).until(
+        EC.presence_of_element_located((By.ID, "tab3"))
+    )
     action = ActionChains(driver)
+    action.move_to_element(tab_cp).click().perform()
     # Cambiar al segundo y tercer iframe
     switch_to_iframe(driver, "wcFrame3")
     switch_to_iframe(driver, "RIPaneIFRAME1")
 
     # Localizar el elemento objetivo y hacer clic
-    target_element = WebDriverWait(driver, 20).until(
-        EC.presence_of_element_located((By.XPATH, "//span[text()='Revisiones de AD (Batch)']"))
+    target_element = WebDriverWait(driver, 150).until(
+        EC.presence_of_element_located((By.XPATH, "//*[@id='pageContainer']/table/tbody[2]/tr/td/div[2]/table/tbody[1]/tr/td[3]/div/table/tbody/tr[2]/td[2]"))
     )
 
     # Forzar desplazamiento para visibilidad
     driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", target_element)
-    time.sleep(1)  # Esperar un momento después del desplazamiento
-    
+    time.sleep(3)  # Esperar un momento después del desplazamiento
+
     # Verificar si el elemento está visible
     if target_element.is_displayed():
         try:
             # Intentar clic con ActionChains
             action.move_to_element(target_element).click().perform()
-            print("¡Open OneWorld: Revisiones de AD (Batch)!")
+            print("¡Entramos a Carga Archivo Facturación!")
         except ElementClickInterceptedException:
             print("Elemento bloqueado por otro elemento, intentando clic con JavaScript.")
             # Forzar clic con JavaScript
