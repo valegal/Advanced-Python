@@ -1,5 +1,6 @@
 from config import setup_driver
 from login import login
+import ctypes
 from info import copy_info_tabla_carga, informes_recientes_estado
 from navigation import navigate_to_carga_archivo,  navigate_to_revision_hechos, navigate_control_archivos_cargados, navigate_home, navigate_agrupacion_hechos, navigate_generar_mov_contable, navigate_AD
 from utils import take_screenshot
@@ -16,6 +17,7 @@ import time
 
 def main():
     
+    prevent_screen_lock()
     driver = setup_driver()
 
     # Realizar el login
@@ -113,8 +115,10 @@ def main():
 
 
     # REALIZAR FUNCIÓN PARA QUE FINALICE PROCESOS ANTES DE TIEMPO POR INCONSISTENCIAS.
-
+    restore_screen_lock()
     driver.quit()
+
+    time.sleep(90000000000000)
 
 
 
@@ -127,6 +131,15 @@ def main():
 
     # finally:
     #     driver.quit()
+
+def prevent_screen_lock():
+    # Llamar a la función para evitar que el sistema entre en modo de suspensión
+    ctypes.windll.kernel32.SetThreadExecutionState(0x80000002)
+
+def restore_screen_lock():
+    # Restaurar el comportamiento normal del sistema
+    ctypes.windll.kernel32.SetThreadExecutionState(0x80000000)
+
 
 if __name__ == "__main__":
     main()

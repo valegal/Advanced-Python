@@ -4,6 +4,7 @@ from selenium.common.exceptions import NoSuchElementException, TimeoutException,
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.alert import Alert
+from navigation import navigate_home
 import time
 
 def goto_verificar(driver, files):
@@ -46,6 +47,8 @@ def goto_verificar(driver, files):
     print(tareas)
 
     time.sleep(5)
+
+    navigate_home(driver)
 
     return tareas
 

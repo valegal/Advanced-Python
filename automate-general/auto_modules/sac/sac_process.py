@@ -50,7 +50,7 @@ def ejecutar_sac_process(fecha):
 
     # Encuentra la segunda página de la tabla Procesos y Reportes y espera hasta que sea visibe
     segundaTablaProcesos = WebDriverWait(driver, 50).until(
-        EC.element_to_be_clickable((By.XPATH, "//a[@href=\"javascript:__doPostBack('ctl00$ctl00$ContentPlaceHolder1$ContentPlaceHolder1$grcGenReportesCtrl$DgvReportes','Page$2')\"]"))
+        EC.element_to_be_clickable((By.XPATH, "//*[@id='ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_DgvReportes']/tbody/tr[7]/td/table/tbody/tr/td[2]/a"))
     )
     segundaTablaProcesos.click()
     time.sleep(3)
@@ -59,7 +59,7 @@ def ejecutar_sac_process(fecha):
 
     # Espera explícita hasta que el enlace esté presente
     faseVentas = WebDriverWait(driver, 80).until(
-        EC.presence_of_element_located((By.XPATH, "//a[@href=\"javascript:__doPostBack('ctl00$ctl00$ContentPlaceHolder1$ContentPlaceHolder1$grcGenReportesCtrl$DgvReportes','Select$1')\"]"))
+        EC.presence_of_element_located((By.XPATH, "//*[@id='ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_DgvReportes']/tbody/tr[3]/td[1]/a/span"))
     )
     faseVentas.click()
     time.sleep(3)
@@ -100,7 +100,7 @@ def ejecutar_sac_process(fecha):
 
     # Espera explícita hasta que el enlace esté presente
     faseVentas = WebDriverWait(driver, 80).until(
-        EC.presence_of_element_located((By.XPATH, "//a[@href=\"javascript:__doPostBack('ctl00$ctl00$ContentPlaceHolder1$ContentPlaceHolder1$grcGenReportesCtrl$DgvReportes','Select$1')\"]"))
+        EC.presence_of_element_located((By.XPATH, "//*[@id='ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_DgvReportes']/tbody/tr[3]/td[1]/a/span"))
     )
     faseVentas.click()
     time.sleep(3)
@@ -141,7 +141,7 @@ def ejecutar_sac_process(fecha):
 
     # Espera explícita hasta que el enlace esté presente
     faseVentas = WebDriverWait(driver, 80).until(
-        EC.presence_of_element_located((By.XPATH, "//a[@href=\"javascript:__doPostBack('ctl00$ctl00$ContentPlaceHolder1$ContentPlaceHolder1$grcGenReportesCtrl$DgvReportes','Select$1')\"]"))
+        EC.presence_of_element_located((By.XPATH, "//*[@id='ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_DgvReportes']/tbody/tr[3]/td[1]/a/span"))
     )
     faseVentas.click()
     time.sleep(3)
@@ -181,13 +181,13 @@ def ejecutar_sac_process(fecha):
     #----- Inicio generar interfaz 4 -----
 
     # Encuentra la primera página de la tabla Procesos y Reportes
-    primeraTablaProcesos = driver.find_element(By.XPATH, "//a[@href=\"javascript:__doPostBack('ctl00$ctl00$ContentPlaceHolder1$ContentPlaceHolder1$grcGenReportesCtrl$DgvReportes','Page$1')\"]")
+    primeraTablaProcesos = driver.find_element(By.XPATH, "//*[@id='ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_DgvReportes']/tbody/tr[4]/td/table/tbody/tr/td[1]/a")
     primeraTablaProcesos.click()
     time.sleep(3)
 
     # Espera explícita hasta que el enlace esté presente
     faseRecaudos = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.XPATH, "//a[@href=\"javascript:__doPostBack('ctl00$ctl00$ContentPlaceHolder1$ContentPlaceHolder1$grcGenReportesCtrl$DgvReportes','Select$4')\"]"))
+        EC.presence_of_element_located((By.XPATH, "//*[@id='ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_DgvReportes']/tbody/tr[6]/td[1]/a/span"))
     )
     faseRecaudos.click()
     time.sleep(3)
@@ -229,7 +229,7 @@ def ejecutar_sac_process(fecha):
 
     # Espera explícita hasta que el enlace esté presente
     faseCastigo = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.XPATH, "//a[@href=\"javascript:__doPostBack('ctl00$ctl00$ContentPlaceHolder1$ContentPlaceHolder1$grcGenReportesCtrl$DgvReportes','Select$2')\"]"))
+        EC.presence_of_element_located((By.XPATH, "//*[@id='ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_DgvReportes']/tbody/tr[4]/td[1]/a/span"))
     )
     faseCastigo.click()
     time.sleep(3)
