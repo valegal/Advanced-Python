@@ -1,69 +1,214 @@
-import os
-import re
-import pdfplumber
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import StaleElementReferenceException
+from selenium.webdriver.support import expected_conditions as EC
+from navigation import switch_to_iframe
+from selenium.webdriver.support.ui import Select
 
-# Carpeta con los archivos PDF
-carpeta_pdf = r"D:\OneDrive - Grupo EPM\Descargas\reportes"
-archivo_salida = r"D:\OneDrive - Grupo EPM\Descargas\resultados.txt"
+import time
 
-# Expresiones regulares mejoradas
-regex_agrupacion = re.compile(r'EMONTANC.*?\s(\d{5})')
-regex_carga = re.compile(r'(\d{5})\s+\d{4}/\d{2}/\d{2}')
-regex_fecha_contable = re.compile(r'(\d{4}/\d{2}/\d{2})\s+.*Asientos Interface Facturacion')
-regex_debitos = re.compile(r'DEBITOS GENERAL\s+([\d,]+\.\d{2})')
-regex_creditos = re.compile(r'CREDITOS GENERAL\s+([\d,]+\.\d{2})-?')
+#==================================================================================================
 
-def extraer_datos(pdf_path):
-    
-    with pdfplumber.open(pdf_path) as pdf:
-        # Leer primera y última página
-        primera_pagina = pdf.pages[0].extract_text()
-        ultima_pagina = pdf.pages[-1].extract_text() 
+def paso_al_f0911(driver, campo_from_val, campo_to_val):
+    # Volver al iframe principal
+    driver.switch_to.default_content()
+    switch_to_iframe(driver, "e1menuAppIframe")
 
-        if not primera_pagina or not ultima_pagina:
-            print(f"⚠ No se pudo extraer texto de {pdf_path}")
-            return None
+    # Hacer tres clics en el input
+    input_element = WebDriverWait(driver, 20).until(
+        EC.element_to_be_clickable((By.XPATH, "//*[@id='G0_1_R0']/td[1]/div/input"))
+    )
+    actions = ActionChains(driver)
+    for _ in range(3):
+        actions.click(input_element)
+    actions.perform()
 
-        # Buscar valores en la primera página
-        agrupacion = regex_agrupacion.search(primera_pagina)
-        carga = regex_carga.search(primera_pagina)
-        fecha_contable = regex_fecha_contable.search(primera_pagina)
+    # Click en checkbox
+    checkbox = WebDriverWait(driver, 20).until(
+        EC.element_to_be_clickable((By.ID, "C0_23"))
+    )
+    checkbox.click()
+    time.sleep(1)
 
-        agrupacion = agrupacion.group(1) if agrupacion else "N/A"
-        carga = carga.group(1) if carga else "N/A"
-        fecha_contable = fecha_contable.group(1) if fecha_contable else "N/A"
+    # Click en botón de envío
+    send_button = WebDriverWait(driver, 20).until(
+        EC.element_to_be_clickable((By.ID, "divC0_30"))
+    )
+    send_button.click()
+    time.sleep(3)
 
-        # Buscar Débitos y Créditos
-        match_debitos = regex_debitos.search(ultima_pagina)
-        match_creditos = regex_creditos.search(ultima_pagina)
 
-        if not match_debitos or not match_creditos:
-            print(f"⚠ No se encontraron valores en {pdf_path}")
-            return None
+    # SELECCIONAR EL USUARIO
 
-        debitos = match_debitos.group(1).replace(",", "")
-        creditos = match_creditos.group(1).replace(",", "")
-        
-        return {
-            "archivo": os.path.basename(pdf_path),
-            "agrupacion": agrupacion,
-            "carga": carga,
-            "fecha_contable": fecha_contable,
-            "debitos": debitos,
-            "creditos": creditos
-        }
+    # Selección en LeftOperand3
+    WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "LeftOperand3")))
+    select_element = driver.find_element(By.ID, "LeftOperand3")
+    driver.execute_script("arguments[0].scrollIntoView(true);", select_element)
+    select = Select(select_element)
+    try:
+        select.select_by_visible_text("IED - Nº de ID del usuario (F0911Z1) (EDUS) [BC]")
+    except StaleElementReferenceException:
+        time.sleep(1)
+        select_element = driver.find_element(By.ID, "LeftOperand3")
+        select = Select(select_element)
+        select.select_by_visible_text("IED - Nº de ID del usuario (F0911Z1) (EDUS) [BC]")
+    time.sleep(1)
 
-# Procesar archivos y guardar resultados
-with open(archivo_salida, "w", encoding="utf-8") as salida:
-    salida.write("Archivo | Agrupación | Carga | Fecha Contable | Débitos | Créditos\n")
-    salida.write("-" * 100 + "\n")
+    # Selección en Comparison3
+    WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "Comparison3")))
+    select_element = driver.find_element(By.ID, "Comparison3")
+    select = Select(select_element)
+    try:
+        select.select_by_visible_text("es igual que")
+    except StaleElementReferenceException:
+        time.sleep(1)
+        select_element = driver.find_element(By.ID, "Comparison3")
+        select = Select(select_element)
+        select.select_by_visible_text("es igual que")
+    time.sleep(1)
 
-    for archivo in os.listdir(carpeta_pdf):
-        if archivo.lower().endswith(".pdf"):
-            ruta_pdf = os.path.join(carpeta_pdf, archivo)
-            datos = extraer_datos(ruta_pdf)
+    # Selección en RightOperand3
+    WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "RightOperand3")))
+    select_element = driver.find_element(By.ID, "RightOperand3")
+    select = Select(select_element)
+    try:
+        select.select_by_visible_text("Literal")
+    except StaleElementReferenceException:
+        time.sleep(1)
+        select_element = driver.find_element(By.ID, "RightOperand3")
+        select = Select(select_element)
+        select.select_by_visible_text("Literal")
+    time.sleep(3)
 
-            if datos:
-                salida.write(f"{datos['archivo']} | {datos['agrupacion']} | {datos['carga']} | {datos['fecha_contable']} | {datos['debitos']} | {datos['creditos']}\n")
+    # Campo "LITtf"
+    campo_from = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.ID, "LITtf"))
+    )
+    campo_from.clear()
+    campo_from.send_keys("EMONTANC")
+    print("✔ Texto EMONTANC escrito en 'LITtf'")
+    time.sleep(1)
 
-print(f"✅ Proceso completado. Resultados guardados en: {archivo_salida}")
+    # Click en botón OK
+    boton_ok = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.ID, "hc_Select"))
+    )
+    driver.execute_script("arguments[0].scrollIntoView();", boton_ok)
+    boton_ok.click()
+
+    time.sleep(5)
+
+    # SELECCIONAR LOS BATCH DE AGRUPACIÓN
+
+    # Selección en LeftOperand3
+    WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "LeftOperand4")))
+    select_element = driver.find_element(By.ID, "LeftOperand4")
+    driver.execute_script("arguments[0].scrollIntoView(true);", select_element)
+    select = Select(select_element)
+    try:
+        select.select_by_visible_text("IED - Número de Batch (F0911Z1) (EDBT) [BC]")
+    except StaleElementReferenceException:
+        time.sleep(1)
+        select_element = driver.find_element(By.ID, "LeftOperand4")
+        select = Select(select_element)
+        select.select_by_visible_text("IED - Número de Batch (F0911Z1) (EDBT) [BC]")
+    time.sleep(1)
+
+    # Selección en Comparison3
+    WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "Comparison4")))
+    select_element = driver.find_element(By.ID, "Comparison4")
+    select = Select(select_element)
+    try:
+        select.select_by_visible_text("es igual que")
+    except StaleElementReferenceException:
+        time.sleep(1)
+        select_element = driver.find_element(By.ID, "Comparison4")
+        select = Select(select_element)
+        select.select_by_visible_text("es igual que")
+    time.sleep(1)
+
+    # Selección en RightOperand3
+    WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "RightOperand4")))
+    select_element = driver.find_element(By.ID, "RightOperand4")
+    select = Select(select_element)
+    try:
+        select.select_by_visible_text("Literal")
+    except StaleElementReferenceException:
+        time.sleep(1)
+        select_element = driver.find_element(By.ID, "RightOperand4")
+        select = Select(select_element)
+        select.select_by_visible_text("Literal")
+    time.sleep(3)
+
+    # Click en la pestaña "Rango de valores"
+    rango_pes = WebDriverWait(driver, 20).until(
+        EC.element_to_be_clickable((By.XPATH, "//*[@id='modelessTabHeaders']//a[contains(text(), 'Rango de valores')]"))
+    )
+    driver.execute_script("arguments[0].scrollIntoView();", rango_pes)
+    rango_pes.click()
+    time.sleep(3)
+
+    # Campo "From"
+    campo_from = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.ID, "LITtfFrom"))
+    )
+    campo_from.clear()
+    campo_from.send_keys(campo_from_val)
+    print(f"✔ Número {campo_from_val} escrito en 'EtfFrom'")
+
+    # Campo "To"
+    campo_to = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.ID, "LITtfTo"))
+    )
+    campo_to.clear()
+    campo_to.send_keys(campo_to_val)
+    print(f"✔ Número {campo_to_val} escrito en 'EtfTo'")
+    time.sleep(3)
+
+    # Click en botón OK
+    boton_ok = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.ID, "hc_Select"))
+    )
+    driver.execute_script("arguments[0].scrollIntoView();", boton_ok)
+    boton_ok.click()
+    time.sleep(3)
+    print("✔ Botón 'OK' clickeado")
+    time.sleep(1)
+
+
+    # Click2 en botón OK
+    boton_ok2 = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.ID, "hc_Select"))
+    )
+    driver.execute_script("arguments[0].scrollIntoView();", boton_ok2)
+    boton_ok2.click()
+    time.sleep(3)
+
+    # Click en botón hc
+    boton_hc = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.ID, "hc_Select"))
+    )
+    driver.execute_script("arguments[0].scrollIntoView();", boton_hc)
+    boton_hc.click()
+    time.sleep(3)
+
+    # Click en botón ok
+    boton_can = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.ID, "hc_OK"))
+    )
+    driver.execute_script("arguments[0].scrollIntoView();", boton_can)
+    boton_can.click()
+    time.sleep(3)
+
+     # Click en botón SALIR
+    boton_salir = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.ID, "hc_Close"))
+    )
+    driver.execute_script("arguments[0].scrollIntoView();", boton_salir)
+    boton_salir.click()
+    time.sleep(3)
+
+
+#==================================================================================================

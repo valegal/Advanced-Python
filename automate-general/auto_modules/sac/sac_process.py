@@ -36,30 +36,37 @@ def ejecutar_sac_process(fecha):
 
     time.sleep(15)
     print("#--------  SAC PROCESS OUTPUTS  --------")
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "cphContenedorMenuSuperior_Menu_lbl10332"))).click()
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "cphContenedorMenuSuperior_Menu_lbt10333")))
+    WebDriverWait(driver, 150).until(EC.element_to_be_clickable((By.ID, "cphContenedorMenuSuperior_Menu_lbl10332"))).click()
+    WebDriverWait(driver, 150).until(EC.presence_of_element_located((By.ID, "cphContenedorMenuSuperior_Menu_lbt10333")))
     procesos_element = driver.find_element(By.ID, "cphContenedorMenuSuperior_Menu_lbl10341")
     ActionChains(driver).move_to_element(procesos_element).perform()
     # Esperar a que el submenú de "Administrativos" aparezca
-    WebDriverWait(driver, 50).until(EC.presence_of_element_located((By.ID, "cphContenedorMenuSuperior_Menu_lbt10342")))
+    WebDriverWait(driver, 100).until(EC.presence_of_element_located((By.ID, "cphContenedorMenuSuperior_Menu_lbt10342")))
     administrativos_element = driver.find_element(By.ID, "cphContenedorMenuSuperior_Menu_lbt10342")
     administrativos_element.click()
-    time.sleep(7)
+    time.sleep(5)
 
     print("Navegación hasta procesos administrativos completada con éxito.")
 
     # Encuentra la segunda página de la tabla Procesos y Reportes y espera hasta que sea visibe
-    segundaTablaProcesos = WebDriverWait(driver, 50).until(
-        EC.element_to_be_clickable((By.XPATH, "//*[@id='ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_DgvReportes']/tbody/tr[7]/td/table/tbody/tr/td[2]/a"))
+    segundaTablaProcesos = WebDriverWait(driver, 150).until(
+        EC.element_to_be_clickable((
+            By.CSS_SELECTOR,
+            "#ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_DgvReportes a[href*='Page$2']"
+        ))
     )
+
     segundaTablaProcesos.click()
-    time.sleep(3)
+    time.sleep(7)
 
     #----- Inicio generar interfaz 1 -----
 
-    # Espera explícita hasta que el enlace esté presente
-    faseVentas = WebDriverWait(driver, 80).until(
-        EC.presence_of_element_located((By.XPATH, "//*[@id='ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_DgvReportes']/tbody/tr[3]/td[1]/a/span"))
+    # Espera a que la nueva página cargue: puede ser por la aparición del ícono "Seleccionar"
+    faseVentas = WebDriverWait(driver, 150).until(
+        EC.element_to_be_clickable((
+            By.CSS_SELECTOR,
+            "#ContentPlaceHolder1_ContentPlaceHolder1_grcGenReportesCtrl_DgvReportes > tbody > tr:nth-child(3) > td:nth-child(1) > a > span.fa-play-circle-o"
+        ))
     )
     faseVentas.click()
     time.sleep(3)
@@ -336,4 +343,4 @@ def ejecutar_sac_process(fecha):
     print(f"Resumen guardado en: {nombre_archivo}")
     print("Cerrando el navegador...")
     driver.quit()
-    ejecutar_main_jde()
+    # ejecutar_main_jde()

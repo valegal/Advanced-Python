@@ -9,7 +9,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.alert import Alert
 from config import fecha_con
 
 # Expresiones regulares mejoradas
@@ -19,13 +18,15 @@ regex_fecha_contable = re.compile(r'(\d{4}/\d{2}/\d{2})\s+.*Asientos Interface F
 regex_debitos = re.compile(r'DEBITOS GENERAL\s+([\d,]+\.\d{2})')
 regex_creditos = re.compile(r'CREDITOS GENERAL\s+([\d,]+\.\d{2})-?')
 
+regex_nfase = re.compile(r'(\d{4}/\d{2}/\d{2})\s+(\d{4}/\d{2}/\d{2})\s+(\d)\b')
+
 # Carpeta con los archivos PDF
 carpeta_pdf = r"D:\OneDrive - Grupo EPM\Descargas\R5609FCT"
 carpeta_pdf2 = r"D:\OneDrive - Grupo EPM\Descargas\ReportesDinamicaContable"
 
 #-----------------------------------------------------------------------------
 
-def review_pdfs(driver, reportes, res_carga):
+def review_pdfs(driver, reportes, batchcarga):
     """
     Esta función automatiza la revisión de los Reportes para Generar Dinámica Contable, seleccionando los archivos para que se genere el pdf.
     """
@@ -53,12 +54,15 @@ def review_pdfs(driver, reportes, res_carga):
 
         print(f"Doble clic realizado en el elemento {i}")
         time.sleep(3)
+    
+    time.sleep(3)
 
     # Mover los archivos descargados
     mover_reportes()
-    contrastar_debitos_y_creditos(carpeta_pdf, res_carga)
+    valores_columna_dos = contrastar_debitos_y_creditos(carpeta_pdf, batchcarga)
     time.sleep(5)
     eliminar_reportes()
+    return valores_columna_dos
 
 
 #-----------------------------------------------------------------------------
@@ -95,10 +99,11 @@ def mover_reportes():
 
 #-----------------------------------------------------------------------------
 
-def contrastar_debitos_y_creditos(carpeta_pdf, res_carga):
+def contrastar_debitos_y_creditos(carpeta_pdf, batchcarga):
     """
     Revisa todos los PDFs en la carpeta y extrae información clave.
     """
+        
     resultados = []
 
     for archivo in os.listdir(carpeta_pdf):
@@ -114,13 +119,13 @@ def contrastar_debitos_y_creditos(carpeta_pdf, res_carga):
 
                 # Extraer información clave
                 agrupacion = regex_agrupacion.search(primera_pagina)
-                carga = regex_carga.search(primera_pagina)
                 fecha_contable = regex_fecha_contable.search(primera_pagina)
                 match_debitos = regex_debitos.search(ultima_pagina)
                 match_creditos = regex_creditos.search(ultima_pagina)
+                fase_carga = regex_nfase.search(primera_pagina)
 
-                if not match_debitos or not match_creditos:
-                    print(f"⚠ No se encontraron valores en {archivo}")
+                if not match_debitos or not match_creditos or not agrupacion or not fecha_contable or not fase_carga:
+                    print(f"⚠ Datos faltantes en {archivo}")
                     continue
 
                 # Convertir los valores correctamente
@@ -130,72 +135,82 @@ def contrastar_debitos_y_creditos(carpeta_pdf, res_carga):
                 # Verificar igualdad
                 if debitos == abs(creditos):
                     print(f"✅ Débitos y créditos coinciden en {archivo}")
+                    resultados.append({
+                            "archivo": archivo,   
+                            "agrupacion": agrupacion.group(1),
+                            "fecha_contable": fecha_contable.group(1) if fecha_contable else "N/A",
+                            "debitos": debitos,
+                            "creditos": creditos,
+                            "fecha_contable": fecha_contable.group(1),
+                            "fase_carga": fase_carga.group(3)
+                    })
                 else:
                     print(f"⚠ Descuadre en {archivo}: Débitos {debitos} vs Créditos {creditos}")
 
-                resultados.append({
-                    "archivo": archivo,
-                    "agrupacion": agrupacion.group(1) if agrupacion else "N/A",
-                    "carga": carga.group(1) if carga else "N/A",
-                    "fecha_contable": fecha_contable.group(1) if fecha_contable else "N/A",
-                    "debitos": debitos,
-                    "creditos": creditos
-                })
-
-    # Actualizar Excel
-    update_excel_batch_agrupacion(resultados, res_carga)
+    # Crear el diccionario con la correspondencia correcta
+    columna_dos = {r["fase_carga"]: r["agrupacion"] for r in resultados}
+    
+    # Actualizar el Excel con los valores correctos
+    update_excel_batch_agrupacion(resultados, batchcarga)
+    return columna_dos
 
 
 #-----------------------------------------------------------------------------
-
-def update_excel_batch_agrupacion(resultados, res_carga):
-    # Ruta del archivo Excel
-    excel_path = r"D:\OneDrive - Grupo EPM\Documentos\InterfazFacturacion\07.  FFN014-V1-Formato Registro BATCH-MARZO.xlsx"
+def update_excel_batch_agrupacion(resultados, batchcarga):
+    excel_path = r"D:\\OneDrive - Grupo EPM\\Documentos\\InterfazFacturacion\\07.  FFN014-V1-Formato Registro BATCH-ABRIL.xlsx"
     
-    # Cargar el archivo Excel
-    wb = openpyxl.load_workbook(excel_path)
+    try:
+        wb = openpyxl.load_workbook(excel_path)
+        print("✅ Archivo Excel cargado correctamente.")
+    except FileNotFoundError:
+        print(f"❌ Error: El archivo {excel_path} no se encontró.")
+        return {}
     
-    # Diccionario para mapear claves de res_carga a nombres de hojas
     hojas_map = {
-        1: "1-FACTURACIÓN",
-        2: "2-AUTOCONSUMOS",
-        3: "3-AJUSTES",
-        4: "4-RECAUDOS",
-        5: "5-CASTIGO"
+        "1": "1-FACTURACIÓN",
+        "2": "2-AUTOCONSUMOS",
+        "3": "3-AJUSTES",
+        "4": "4-RECAUDOS",
+        "5": "5-CASTIGO"
     }
+
+    columna = {}
     
     for resultado in resultados:
+        fase_carga = resultado["fase_carga"]
         agrupacion = resultado["agrupacion"]
-        fecha = resultado["fecha_contable"]  # Formato esperado: YYYY/MM/DD
-        
-        if agrupacion == "N/A" or fecha == "N/A":
-            print(f"⚠ Datos insuficientes para actualizar Excel en {resultado['archivo']}")
+        fecha = resultado["fecha_contable"]
+
+        if fase_carga not in batchcarga:
+            print(f"⚠ Fase de carga {fase_carga} no encontrada en batchcarga")
             continue
-        
-        # Extraer el día de la fecha (ej. "2025/03/16" → 16)
+
+        hoja_nombre = hojas_map.get(fase_carga)
+        if not hoja_nombre or hoja_nombre not in wb.sheetnames:
+            print(f"⚠ No se encontró la hoja {hoja_nombre} en el archivo Excel.")
+            continue
+
         try:
             dia = int(fecha.split("/")[2])
-            celda_destino = f"C{7 + dia}"  # Ajusta la fila según el día del mes
+            celda_destino = f"C{7 + dia}"
         except ValueError:
             print(f"⚠ Fecha inválida en {resultado['archivo']}: {fecha}")
             continue
-        
-        # Determinar la hoja correcta usando res_carga
-        for clave, lote in res_carga.items():
-            if clave in hojas_map:
-                hoja_nombre = hojas_map[clave]
-                
-                try:
-                    hoja = wb[hoja_nombre]
-                    hoja[celda_destino] = agrupacion  # Escribir el valor en la celda
-                    print(f"✅ Actualizado {hoja_nombre} en {celda_destino} con {agrupacion}")
-                except KeyError:
-                    print(f"⚠ No se encontró la hoja {hoja_nombre} en el archivo Excel.")
+
+        hoja = wb[hoja_nombre]
+        hoja[celda_destino] = agrupacion
+        print(f"✅ Actualizado {hoja_nombre} en {celda_destino} con {agrupacion}")
     
-    # Guardar cambios
-    wb.save(excel_path)
-    wb.close()
-    print("✅ Archivo Excel actualizado correctamente.")
+    try:
+        wb.save(excel_path)
+        wb.close()
+        print("✅ Archivo Excel actualizado correctamente.")
+    except Exception as e:
+        print(f"❌ Error al guardar el archivo Excel: {e}")
+    
+    return columna
+
+
 
 
 #-----------------------------------------------------------------------------

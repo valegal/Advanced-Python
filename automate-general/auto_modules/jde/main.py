@@ -1,18 +1,20 @@
 from config import setup_driver
-from login import login
+from login import login, logout, recargar_pagina
 import ctypes
 from info import copy_info_tabla_carga, informes_recientes_estado
-from navigation import navigate_to_carga_archivo,  navigate_to_revision_hechos, navigate_control_archivos_cargados, navigate_home, navigate_agrupacion_hechos, navigate_generar_mov_contable, navigate_AD
+from navigation import navigate_to_carga_archivo,  navigate_to_revision_hechos, navigate_control_archivos_cargados, navigate_home, navigate_agrupacion_hechos, navigate_generar_mov_contable, navigate_AD, navigate_pasa_comprobante_F0911Z1, navigate_revision_comprobante
 from utils import take_screenshot
 from utils import clasificar_tablas_por_procesado
-from config import fecha_con, fecha_gen, fecha_con_lib
+from config import fecha_con, fecha_gen, fecha_con_lib, USER, PASS
 from input import input_estado_registro, input_fecha_contable
 from verify import verify_control_archivos
 from button import clic_boton_envio, clic_boton_lupa
-from actions import action_cargar_fases, agrupar, generar_movimiento_contable
+from actions import action_cargar_fases, agrupar, generar_movimiento_contable, contabilizar
 from search import search_estado_registro
 from goto import esperar_tareas_completas, actualizar_informes_recientes
 from review import review_pdfs, mover_reportes
+from pull import paso_al_f0911
+from batch_revisiones import buscar_revisiones_AD
 import time
 
 def main():
@@ -21,7 +23,7 @@ def main():
     driver = setup_driver()
 
     # Realizar el login
-    login(driver, "EMONTANC", "edmcESSA07**")
+    login(driver, USER, PASS)
 
     # ================= PASO 1 CARGA ARCHIVO IF =================
 
@@ -30,8 +32,11 @@ def main():
     action_cargar_fases(driver, fecha_con_lib)
 
     actualizar_informes_recientes(driver)
+    time.sleep(3)
 
     esperar_tareas_completas(driver, 5)
+
+    recargar_pagina(driver)
 
     # ================= PASO 2 VERIFICAR ERRORES 'REVISIÓN HECHOS ECONÓMICOS' =================
 
@@ -41,6 +46,7 @@ def main():
     time.sleep(3)
     search_estado_registro(driver)
     navigate_home(driver)
+    recargar_pagina(driver)
     time.sleep(3)
 
     # ================= PASO 3 CONTROL DE LOS ARCHIVOS QUE SE ACABAN DE SUBIR =================
@@ -65,6 +71,7 @@ def main():
 
     navigate_home(driver)
     time.sleep(3)
+    recargar_pagina(driver)
 
     # ================= PASO 4 AGRUPACIÓN DE HECHOS ECONOMICOS =================
 
@@ -77,7 +84,9 @@ def main():
 
     esperar_tareas_completas(driver, numbatchcarga)
 
-    # # ================= PASO 5 GENERAR MOVIMIENTO CONTABLE IF =================
+    recargar_pagina(driver)
+
+    # ================= PASO 5 GENERAR MOVIMIENTO CONTABLE IF =================
 
     for _ in range(numbatchcarga):
         navigate_generar_mov_contable(driver)
@@ -88,38 +97,68 @@ def main():
 
     esperar_tareas_completas(driver, numbatchcarga)
 
+    recargar_pagina(driver)
+
     # ================= PASO 6 REPORTES DINÁMICA CONTABLE =================
 
-    review_pdfs(driver, numbatchcarga, res_carga)
+    valores_columna_dos = review_pdfs(driver, numbatchcarga, batchcarga)
+    print(valores_columna_dos)
+
+    # # Ordenar por la clave
+    valores_columna_dos = dict(sorted(valores_columna_dos.items(), key=lambda x: int(x[0])))
+    print(valores_columna_dos)
 
     navigate_home(driver)
-    time.sleep(5)
+
+
+    recargar_pagina(driver)
+    time.sleep(1)
+
 
     # ================= PASO 7 REVISIONES DE AD (BATCH) =================
 
     navigate_AD(driver)
     time.sleep(5)
+    buscar_revisiones_AD(driver, valores_columna_dos)
+    
+    print("Aquí quedamos!")
 
-    print("Vamos muy bien!")
+    navigate_home(driver)
+
+    recargar_pagina(driver)
 
 
     # ================= PASO 9 PASA COMPROBANTE DE F0911Z1 A F0911 =================
 
+    navigate_pasa_comprobante_F0911Z1(driver)
+    time.sleep(5)
+
+    # Obtener el mayor valor para campo_from y el menor valor para campo_to
+    campo_to_val = max(valores_columna_dos.values(), key=int)
+    campo_from_val = min(valores_columna_dos.values(), key=int)
+
+    paso_al_f0911(driver, campo_from_val, campo_to_val)
+    time.sleep(3)
+    recargar_pagina(driver)
+
+
     # ================= PASO 11 REVISIÓN DEL COMPROBANTE =================
 
+    time.sleep(5)
+    navigate_revision_comprobante(driver)
+
+    contabilizar(driver)
+
+    navigate_home(driver)
+    time.sleep(3)
+
+    logout(driver)
+    
 
     # =============== ADD ===============
 
-    # esperar_tareas_completas(driver)
-
-
-
-    # REALIZAR FUNCIÓN PARA QUE FINALICE PROCESOS ANTES DE TIEMPO POR INCONSISTENCIAS.
     restore_screen_lock()
     driver.quit()
-
-    time.sleep(90000000000000)
-
 
 
 # ---------------------------------------------------

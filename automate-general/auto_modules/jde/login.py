@@ -2,6 +2,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
 import time
 
 WEBSITE_URL_JDE = "https://epm-vws20c.corp.epm.com.co/jde/E1Menu.maf"
@@ -17,6 +18,8 @@ def login(driver, username, password):
 
     # Esperar unos segundos para asegurar la carga
     time.sleep(10)
+
+#----------------------------------------------------------------------------
 
 def logout(driver):
         # Volver al contenido principal
@@ -44,3 +47,22 @@ def logout(driver):
         print("No se encontró alerta de confirmación de cierre de sesión.")
 
     time.sleep(3)
+
+#----------------------------------------------------------------------------
+
+def recargar_pagina(driver, metodo="f5"):
+    """
+    Recarga la página en Selenium.
+
+    :param driver: Instancia del WebDriver de Selenium.
+    :param metodo: Método de recarga, puede ser "f5" o "ctrl+r".
+    """
+    if metodo == "f5":
+        driver.refresh()  # Método estándar de Selenium
+    elif metodo == "ctrl+r":
+        driver.find_element("tag name", "body").send_keys(Keys.CONTROL, "r")  # Simula Ctrl + R
+    else:
+        raise ValueError("Método inválido. Usa 'f5' o 'ctrl+r'.")
+
+    print("🔄 Página recargada")
+    time.sleep(3)  # Esperar un poco para evitar problemas de carga

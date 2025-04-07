@@ -316,47 +316,7 @@ def navigate_AD(driver):
         try:
             # Intentar clic con ActionChains
             action.move_to_element(target_element).click().perform()
-            print("¡Entramos a Carga Archivo Facturación!")
-        except ElementClickInterceptedException:
-            print("Elemento bloqueado por otro elemento, intentando clic con JavaScript.")
-            # Forzar clic con JavaScript
-            driver.execute_script("arguments[0].click();", target_element)
-    else:
-        print("El elemento no es interactivo o está oculto.")
-
-#           OCHO
-#       ██████   ███     
-#      ██    ██   ██     
-#      ██    ██   ██     
-#      ██    ██   ██     
-#       ██████   ████ 
-
-# ------------------------------------------------
-
-def navigate_revision_comprobante(driver):
-    """Navega a la vista de Control Archivos Cargados en la plataforma sin ir al tab3"""
-    # Cambiar al primer iframe
-    switch_to_iframe(driver, "e1menuAppIframe")
-    action = ActionChains(driver)
-    # Cambiar al segundo y tercer iframe
-    switch_to_iframe(driver, "wcFrame3")
-    switch_to_iframe(driver, "RIPaneIFRAME1")
-
-    # Localizar el elemento objetivo y hacer clic
-    target_element = WebDriverWait(driver, 20).until(
-        EC.presence_of_element_located((By.XPATH, "//span[text()='Revisión del Comprobante']"))
-    )
-
-    # Forzar desplazamiento para visibilidad
-    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", target_element)
-    time.sleep(1)  # Esperar un momento después del desplazamiento
-    
-    # Verificar si el elemento está visible
-    if target_element.is_displayed():
-        try:
-            # Intentar clic con ActionChains
-            action.move_to_element(target_element).click().perform()
-            print("¡Open OneWorld: Revisión del Comprobante!")
+            print("¡Entramos a Revisiones de AD (Batch!")
         except ElementClickInterceptedException:
             print("Elemento bloqueado por otro elemento, intentando clic con JavaScript.")
             # Forzar clic con JavaScript
@@ -373,6 +333,89 @@ def navigate_revision_comprobante(driver):
 
 # -----------------------------------------------
 
+def navigate_pasa_comprobante_F0911Z1(driver):
+    """Navega a la vista de Pasa Comprobante de F0911Z1 a F0911"""
+    # Cambiar al primer iframe
+    switch_to_iframe(driver, "e1menuAppIframe")
+
+    # Localizar y hacer clic en la pestaña `tab3`
+    tab_cp = WebDriverWait(driver, 150).until(
+        EC.presence_of_element_located((By.ID, "tab3"))
+    )
+    action = ActionChains(driver)
+    action.move_to_element(tab_cp).click().perform()
+    # Cambiar al segundo y tercer iframe
+    switch_to_iframe(driver, "wcFrame3")
+    switch_to_iframe(driver, "RIPaneIFRAME1")
+
+    # Localizar el elemento objetivo y hacer clic
+    target_element = WebDriverWait(driver, 150).until(
+        EC.presence_of_element_located((By.XPATH, "//*[@id='pageContainer']/table/tbody[2]/tr/td/div[2]/table/tbody[1]/tr/td[4]/div/table/tbody/tr[2]/td[2]"))
+    )
+
+    # Forzar desplazamiento para visibilidad
+    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", target_element)
+    time.sleep(3)  # Esperar un momento después del desplazamiento
+
+    # Verificar si el elemento está visible
+    if target_element.is_displayed():
+        try:
+            # Intentar clic con ActionChains
+            action.move_to_element(target_element).click().perform()
+            print("¡Entramos a Pasa Comprobante de F0911Z1 a F0911!")
+        except ElementClickInterceptedException:
+            print("Elemento bloqueado por otro elemento, intentando clic con JavaScript.")
+            # Forzar clic con JavaScript
+            driver.execute_script("arguments[0].click();", target_element)
+    else:
+        print("El elemento no es interactivo o está oculto.")
+
+
+#           OCHO
+#       ██████   ███     
+#      ██    ██   ██     
+#      ██    ██   ██     
+#      ██    ██   ██     
+#       ██████   ████ 
+
+# ------------------------------------------------
+
+def navigate_revision_comprobante(driver):
+    """Navega a la vista de Revisión del Comprobante"""
+    # Cambiar al primer iframe
+    switch_to_iframe(driver, "e1menuAppIframe")
+
+    # Localizar y hacer clic en la pestaña `tab3`
+    tab_cp = WebDriverWait(driver, 150).until(
+        EC.presence_of_element_located((By.ID, "tab3"))
+    )
+    action = ActionChains(driver)
+    action.move_to_element(tab_cp).click().perform()
+    # Cambiar al segundo y tercer iframe
+    switch_to_iframe(driver, "wcFrame3")
+    switch_to_iframe(driver, "RIPaneIFRAME1")
+
+    # Localizar el elemento objetivo y hacer clic
+    target_element = WebDriverWait(driver, 150).until(
+        EC.presence_of_element_located((By.XPATH, "//*[@id='pageContainer']/table/tbody[2]/tr/td/div[2]/table/tbody[1]/tr/td[1]/div/table/tbody/tr[2]/td[2]/div/table"))
+    )
+
+    # Forzar desplazamiento para visibilidad
+    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", target_element)
+    time.sleep(3)  # Esperar un momento después del desplazamiento
+
+    # Verificar si el elemento está visible
+    if target_element.is_displayed():
+        try:
+            # Intentar clic con ActionChains
+            action.move_to_element(target_element).click().perform()
+            print("¡Entramos a Revisión del Comprobante!")
+        except ElementClickInterceptedException:
+            print("Elemento bloqueado por otro elemento, intentando clic con JavaScript.")
+            # Forzar clic con JavaScript
+            driver.execute_script("arguments[0].click();", target_element)
+    else:
+        print("El elemento no es interactivo o está oculto.")
 
 #           OCHO
 #       ██████   ███     

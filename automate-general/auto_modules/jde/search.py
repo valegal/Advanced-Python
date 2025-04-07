@@ -3,7 +3,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from navigation import switch_to_iframe, navigate_home
+from config import USER
 import time
+
+#--------------------------------------------------------------------------------------------
 
 def search_estado_registro(driver):
     driver.switch_to.default_content()
@@ -65,15 +68,9 @@ def search_estado_registro(driver):
                 input_nit = WebDriverWait(driver, 50).until(
                     EC.presence_of_element_located((By.ID, "C0_36"))
                 )
+
                 input_nit.clear()
-
                 time.sleep(2)
-                
-                if input_nit.get_attribute("value"):
-
-                    print("⚠️ El input NIT no se pudo borrar, pasando al siguiente.")
-                    continue  # Pasa al siguiente radio button
-                
                 print("✅ Se borró el contenido del input NIT Suscriptor.")
 
                 boton_ok = WebDriverWait(driver, 50).until(
@@ -107,3 +104,32 @@ def search_estado_registro(driver):
 
     finally:
         print("🔄 Proceso de revisión de hechos económicos finalizado.")
+
+
+#--------------------------------------------------------------------------------------------
+
+def revision_comprobante(driver):
+
+    # Volver al iframe principal
+    driver.switch_to.default_content()
+    switch_to_iframe(driver, "e1menuAppIframe")
+
+    # Ingresar user en el input de ID usuario
+    id_input = WebDriverWait(driver, 20).until(
+        EC.element_to_be_clickable((By.XPATH, "//*[@id='qbeRow0_1']/td[9]/div/nobr/input"))
+    )
+    id_input.click()
+    id_input.clear()
+    id_input.send_keys(USER)
+
+    time.sleep(1)
+
+    boton_buscar = WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.ID, "hc_Find"))
+        )
+    boton_buscar.click()
+    time.sleep(7)
+    
+
+
+

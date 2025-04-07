@@ -5,11 +5,13 @@ import logging
 
 # Configuración general
 CHROMEDRIVER_PATH = r"C:\Users\vgaleanc\Escritorio\chromedriver\chromedriver-win64\chromedriver.exe"
+USER = "EMONTANC"
+PASS = "edmcESSA07**"
 WEBSITE_URL_JDE = "https://epm-vws20c.corp.epm.com.co/jde/E1Menu.maf"
-fecha_gen = "20250329"
-fecha_con = "20250329"
+fecha_gen = "20250407"
+fecha_con = "20250401"
 fecha_con_lib = f"*{fecha_con}*"
-EXCEL_PATH = r"D:\OneDrive - Grupo EPM\Documentos\InterfazFacturacion\07.  FFN014-V1-Formato Registro BATCH-MARZO.xlsx"
+EXCEL_PATH = r"D:\\OneDrive - Grupo EPM\\Documentos\\InterfazFacturacion\\07.  FFN014-V1-Formato Registro BATCH-ABRIL.xlsx"
 
 def setup_driver():
     """Configura y retorna el driver de Selenium."""

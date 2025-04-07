@@ -4,7 +4,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from navigation import switch_to_iframe, navigate_home
+from config import fecha_con
+import openpyxl
 import time
+
+# -----------------------------------------------------------------
 
 def action_cargar_fases(driver, fecha_con):
     fases = ['01', '02', '03', '04', '05']  # Lista de fases a recorrer
@@ -42,6 +46,7 @@ def action_cargar_fases(driver, fecha_con):
             tabla = WebDriverWait(driver, 20).until(
                 EC.presence_of_element_located((By.ID, "jdeGridData0_1.0"))
             )
+
             driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", tabla)
 
             time.sleep(5)
@@ -86,7 +91,7 @@ def action_cargar_fases(driver, fecha_con):
     print("Proceso de carga de fases finalizado.")
 
 
-# ------------------------------------------------
+# -----------------------------------------------------------------
 
 def agrupar(driver, numero):
     # Volver al iframe `e1menuAppIframe`
@@ -121,7 +126,7 @@ def agrupar(driver, numero):
     
     print(f"Proceso de agrupación finalizado para {numero}.")
 
-# ------------------------------------------------
+# -----------------------------------------------------------------
 
 def generar_movimiento_contable(driver, bcg):
     # Volver al iframe `e1menuAppIframe`
@@ -157,3 +162,70 @@ def generar_movimiento_contable(driver, bcg):
     time.sleep(3)
     
     print(f"Proceso de generar movimiento contable finalizado para {bcg}.")
+
+# -----------------------------------------------------------------
+
+
+def contabilizar(driver):
+    # Volver al iframe `e1menuAppIframe`
+    driver.switch_to.default_content()
+    switch_to_iframe(driver, "e1menuAppIframe")
+
+    # Step 1: Enter user ID
+    input_field = WebDriverWait(driver, 100).until(
+        EC.presence_of_element_located((By.XPATH, "//*[@id='qbeRow0_1']/td[9]/div/nobr/input"))
+    )
+    input_field.click()
+    input_field.clear()
+    input_field.send_keys("EMONTANC")
+    time.sleep(2)
+
+    # Click search button
+    boton_buscar = driver.find_element(By.XPATH, "//*[@id='hc_Find']")
+    ActionChains(driver).move_to_element(boton_buscar).click().perform()
+    time.sleep(10)
+
+    # Extraer los números de lote de la columna 3
+    lotes = []
+    row_index = 0
+
+    while True:
+        try:
+            cell_xpath = f'//*[@id="G0_1_R{row_index}"]/td[3]/div'
+            cell = driver.find_element(By.XPATH, cell_xpath)
+            lotes.append(cell.text.strip())
+            row_index += 1
+        except:
+            break  # No hay más filas
+
+    print("Lotes encontrados:", lotes)
+
+    # Ruta del archivo Excel
+    excel_path = r"D:\\OneDrive - Grupo EPM\\Documentos\\InterfazFacturacion\\07.  FFN014-V1-Formato Registro BATCH-ABRIL.xlsx"
+    wb = openpyxl.load_workbook(excel_path)
+
+    if len(lotes) == 3:
+        dia = int(fecha_con[-2:])
+        fila = dia + 7
+
+        hoja_facturacion = wb["1-FACTURACIÓN"]
+        hoja_ajustes = wb["3-AJUSTES"]
+        hoja_recaudos = wb["4-RECAUDOS"]
+
+        hoja_facturacion[f"D{fila}"] = lotes[0]
+        hoja_ajustes[f"D{fila}"] = lotes[1]
+        hoja_recaudos[f"D{fila}"] = lotes[2]
+
+    else:
+        hoja_facturacion = wb["1-FACTURACIÓN"]
+        columnas = ['K', 'L', 'M']
+        for i, lote in enumerate(lotes[:3]):
+            hoja_facturacion[f"{columnas[i]}4"] = lote
+
+    wb.save(excel_path)
+    wb.close()
+
+    # Cerrar la ventana
+    boton_cerrar = driver.find_element(By.ID, "hc_Close")
+    boton_cerrar.click()
+    time.sleep(5)
