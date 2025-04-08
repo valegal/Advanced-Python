@@ -209,6 +209,7 @@ def handle_recaudos_errors(driver):
 
     # Intentar cerrar con OK al final del manejo de errores
     try:
+        time.sleep(15)
         ok_button = WebDriverWait(driver, 20).until(
             EC.element_to_be_clickable((By.XPATH, "//*[@id='hc_OK']"))
         )

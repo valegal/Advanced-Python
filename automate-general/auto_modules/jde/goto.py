@@ -189,9 +189,11 @@ def esperar_tareas_completas(driver, files, max_retries=32, retry_interval=40):
                     time.sleep(3)
                     # Hacer clic en el icono de cerrar
                     cerrar = WebDriverWait(driver, 100).until(
-                                EC.element_to_be_clickable((By.XPATH, "//*[@id='hc_Close']"))
-                            )
-                    cerrar.double_click()
+                        EC.element_to_be_clickable((By.XPATH, "//*[@id='hc_Close']"))
+                    )
+                    ActionChains(driver).double_click(cerrar).perform()
+
+
                     time.sleep(3)
                     navigate_home(driver)
                     return True

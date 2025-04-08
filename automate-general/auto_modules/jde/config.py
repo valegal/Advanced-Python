@@ -9,7 +9,7 @@ USER = "EMONTANC"
 PASS = "edmcESSA07**"
 WEBSITE_URL_JDE = "https://epm-vws20c.corp.epm.com.co/jde/E1Menu.maf"
 fecha_gen = "20250407"
-fecha_con = "20250401"
+fecha_con = "20250402"
 fecha_con_lib = f"*{fecha_con}*"
 EXCEL_PATH = r"D:\\OneDrive - Grupo EPM\\Documentos\\InterfazFacturacion\\07.  FFN014-V1-Formato Registro BATCH-ABRIL.xlsx"
 

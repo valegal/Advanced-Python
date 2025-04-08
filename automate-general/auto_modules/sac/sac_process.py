@@ -343,4 +343,4 @@ def ejecutar_sac_process(fecha):
     print(f"Resumen guardado en: {nombre_archivo}")
     print("Cerrando el navegador...")
     driver.quit()
-    # ejecutar_main_jde()
+    ejecutar_main_jde()
