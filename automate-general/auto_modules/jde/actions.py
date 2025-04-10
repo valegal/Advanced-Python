@@ -4,7 +4,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from navigation import switch_to_iframe, navigate_home
-from config import fecha_con
+from config import fecha_con, EXCEL_PATH, USER
 import openpyxl
 import time
 
@@ -177,7 +177,7 @@ def contabilizar(driver):
     )
     input_field.click()
     input_field.clear()
-    input_field.send_keys("EMONTANC")
+    input_field.send_keys(USER)
     time.sleep(2)
 
     # Click search button
@@ -201,7 +201,7 @@ def contabilizar(driver):
     print("Lotes encontrados:", lotes)
 
     # Ruta del archivo Excel
-    excel_path = r"D:\\OneDrive - Grupo EPM\\Documentos\\InterfazFacturacion\\07.  FFN014-V1-Formato Registro BATCH-ABRIL.xlsx"
+    excel_path = EXCEL_PATH
     wb = openpyxl.load_workbook(excel_path)
 
     if len(lotes) == 3:
@@ -224,6 +224,10 @@ def contabilizar(driver):
 
     wb.save(excel_path)
     wb.close()
+
+    time.sleep(3)
+
+    # REALIZAR CONTABILIZACIÓN
 
     # Cerrar la ventana
     boton_cerrar = driver.find_element(By.ID, "hc_Close")

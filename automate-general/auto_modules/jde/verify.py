@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from navigation import switch_to_iframe, navigate_home
 from selenium.webdriver.common.keys import Keys
 from config import fecha_con, EXCEL_PATH
+from login import detener_proceso
 
 #---------------------------------------------------------
 
@@ -116,7 +117,18 @@ def verify_control_archivos(driver):
         except NoSuchElementException:
             print(f"⚠️ No se encontró uno de los valores en la fila {index+1}.")
 
+    # Actulizar Excel con Batch de carga
     update_excel_with_lotes(res_carga)
+
+
+    # Validación para detener el proceso si no hay faselote 1 o 4
+    faselotes = [res_carga[key] for key in res_carga if key.startswith('faselote')]
+    if len(faselotes) == 1 or all(f not in ('1', '4') for f in faselotes):
+        print("🛑 No se encontraron faselotes 1 o 4. Deteniendo el proceso...")
+        detener_proceso(driver)
+        return None
+
+
     return res_carga
 
 #---------------------------------------------------------

@@ -148,7 +148,7 @@ def actualizar_informes_recientes(driver):
         raise
 # ---------------------------------------------------------------------------------
 
-def esperar_tareas_completas(driver, files, max_retries=32, retry_interval=40):
+def esperar_tareas_completas(driver, files, max_retries=60, retry_interval=35):
     """
     Ejecuta goto_verificar hasta que todas las tareas estén en estado 'Hecho'
     con múltiples capas de depuración.
@@ -191,10 +191,9 @@ def esperar_tareas_completas(driver, files, max_retries=32, retry_interval=40):
                     cerrar = WebDriverWait(driver, 100).until(
                         EC.element_to_be_clickable((By.XPATH, "//*[@id='hc_Close']"))
                     )
-                    ActionChains(driver).double_click(cerrar).perform()
+                    cerrar.click()
 
-
-                    time.sleep(3)
+                    time.sleep(1)
                     navigate_home(driver)
                     return True
                
@@ -207,7 +206,7 @@ def esperar_tareas_completas(driver, files, max_retries=32, retry_interval=40):
                 buscar = WebDriverWait(driver, 100).until(
                             EC.element_to_be_clickable((By.XPATH, "//*[@id='hc_Find']"))
                         )
-                buscar.double_click()
+                buscar.click()
                
                 # Esperar para el próximo intento
                 debug_print(f"Esperando {retry_interval} segundos...")

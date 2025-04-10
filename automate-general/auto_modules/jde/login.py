@@ -4,8 +4,8 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 import time
-
-WEBSITE_URL_JDE = "https://epm-vws20c.corp.epm.com.co/jde/E1Menu.maf"
+from navigation import navigate_home
+from config import WEBSITE_URL_JDE
 
 def login(driver, username, password):
     """Realiza el inicio de sesión en la aplicación."""
@@ -66,3 +66,16 @@ def recargar_pagina(driver, metodo="f5"):
 
     print("🔄 Página recargada")
     time.sleep(3)  # Esperar un poco para evitar problemas de carga
+
+#----------------------------------------------------------------------------
+
+def detener_proceso(driver):
+
+    time.sleep(2)
+    navigate_home(driver)
+    logout(driver)
+    time.sleep(2)
+    driver.quit()
+
+
+

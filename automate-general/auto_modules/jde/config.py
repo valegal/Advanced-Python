@@ -2,16 +2,31 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 import logging
+from pathlib import Path
 
-# Configuración general
-CHROMEDRIVER_PATH = r"C:\Users\vgaleanc\Escritorio\chromedriver\chromedriver-win64\chromedriver.exe"
+#========= Configuración general ==========
+
+# Rutas
+CHROMEDRIVER_PATH = Path.home() / "Escritorio" / "chromedriver" / "chromedriver-win64" / "chromedriver.exe"
+WEBSITE_URL_JDE = "https://epm-vws20c.corp.epm.com.co/jde/E1Menu.maf"
+EXCEL_PATH = Path.home() / "OneDrive - Grupo EPM" / "Documentos" / "InterfazFacturacion" / "07.  FFN014-V1-Formato Registro BATCH-ABRIL.xlsx"
+RUTA_RES_CARGA = Path.home() / "OneDrive - Grupo EPM" / "Descargas" / "res_carga.txt"
+
+# Credenciales
 USER = "EMONTANC"
 PASS = "edmcESSA07**"
-WEBSITE_URL_JDE = "https://epm-vws20c.corp.epm.com.co/jde/E1Menu.maf"
+
+# Carpeta con los archivos PDF
+FOLDER_R5609FCT = Path.home() / "OneDrive - Grupo EPM" / "Descargas" / "R5609FCT"
+FOLDER_DINAMICAS = Path.home() / "OneDrive - Grupo EPM" / "Descargas" / "ReportesDinamicaContable"
+FOLDER_ORIGEN = Path.home() / "OneDrive - Grupo EPM" / "Descargas" 
+
+# Variables modificables por el usuario
 fecha_gen = "20250407"
 fecha_con = "20250402"
 fecha_con_lib = f"*{fecha_con}*"
-EXCEL_PATH = r"D:\\OneDrive - Grupo EPM\\Documentos\\InterfazFacturacion\\07.  FFN014-V1-Formato Registro BATCH-ABRIL.xlsx"
+
+#-------------------------------------------------------------------------------------------------------
 
 def setup_driver():
     """Configura y retorna el driver de Selenium."""

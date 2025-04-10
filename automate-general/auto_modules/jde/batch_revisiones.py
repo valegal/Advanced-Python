@@ -7,6 +7,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from navigation import navigate_home
 import time
 import pyautogui
+from config import USER
 
 #================================================================================
 
@@ -30,7 +31,7 @@ def buscar_revisiones_AD(driver, valores):
             )
             input_field.click()
             input_field.clear()
-            input_field.send_keys("EMONTANC")
+            input_field.send_keys(USER)
             time.sleep(2)
 
             # Step 2: Enter batch number
@@ -53,8 +54,6 @@ def buscar_revisiones_AD(driver, valores):
                 EC.presence_of_element_located((By.XPATH, "//*[@id='G0_1_R0']/td[1]/div/input"))
             )
             ActionChains(driver).double_click(radio_button).perform()
-
-
 
 
             # Espera específica para que el campo del número de lote aparezca o detectar si se regresó al menú
@@ -84,7 +83,6 @@ def buscar_revisiones_AD(driver, valores):
                         raise TimeoutError("No se encontró el campo 'C0_9' ni el label de retorno al menú.")
             else:
                 raise TimeoutError("No se pudo acceder al detalle del lote después de múltiples intentos.")
-
 
 
             time.sleep(5)
@@ -181,6 +179,7 @@ def handle_recaudos_errors(driver):
             if not nuevos:
                 print("Todos los errores han sido procesados.")
                 break
+            
 
             for link in nuevos:
                 try:
@@ -202,23 +201,50 @@ def handle_recaudos_errors(driver):
                     print(f"Error al hacer clic en error: {e}")
                     continue
 
-            time.sleep(3)
+            time.sleep(2)
 
     except Exception as e:
         print(f"No se detectaron errores o hubo una excepción: {e}")
 
     # Intentar cerrar con OK al final del manejo de errores
     try:
-        time.sleep(15)
-        ok_button = WebDriverWait(driver, 20).until(
+        print("Esperando que la interfaz se asiente tras corregir errores...")
+        time.sleep(8)  # Espera base tras corrección de errores
+
+        # Espera extendida para que reaparezca el botón OK
+        ok_button = WebDriverWait(driver, 120).until(
             EC.element_to_be_clickable((By.XPATH, "//*[@id='hc_OK']"))
         )
-        ok_button.click()
-        print("Botón OK presionado después de revisar errores.")
-    except Exception as e:
-        print(f"No se encontró botón OK al final: {e}")
+        print("Botón OK detectado, intentando presionar...")
 
-    time.sleep(5)
+        # Intentamos un clic normal
+        ok_button.click()
+        time.sleep(3)
+
+        # Verificamos si seguimos en la misma pantalla (por si no funcionó el clic)
+        reintentos = 0
+        while reintentos < 3:
+            try:
+                # Si el botón OK sigue presente, quizás no hizo efecto
+                WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located((By.XPATH, "//*[@id='hc_OK']"))
+                )
+                print("Botón OK aún presente, intentando doble clic.")
+                ActionChains(driver).double_click(ok_button).perform()
+                time.sleep(3)
+                reintentos += 1
+            except:
+                break
+
+        print("Esperando retorno a la vista principal...")
+        esperar_elemento_con_movimiento(driver, "//*[@id='qbeRow0_1']/td[2]/div/nobr/input", timeout=600)
+        print("Retorno confirmado.")
+
+    except Exception as e:
+        print(f"Fallo al intentar presionar el segundo OK o al volver al menú principal: {e}")
+    
+    time.sleep(2)
+
 
 #================================================================================
 

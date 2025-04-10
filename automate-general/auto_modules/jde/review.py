@@ -9,7 +9,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
-from config import fecha_con
+from config import fecha_con, FOLDER_DINAMICAS, FOLDER_R5609FCT, FOLDER_ORIGEN, EXCEL_PATH
+
 
 # Expresiones regulares mejoradas
 regex_agrupacion = re.compile(r'EMONTANC.*?\s(\d{5})')
@@ -21,8 +22,9 @@ regex_creditos = re.compile(r'CREDITOS GENERAL\s+([\d,]+\.\d{2})-?')
 regex_nfase = re.compile(r'(\d{4}/\d{2}/\d{2})\s+(\d{4}/\d{2}/\d{2})\s+(\d)\b')
 
 # Carpeta con los archivos PDF
-carpeta_pdf = r"D:\OneDrive - Grupo EPM\Descargas\R5609FCT"
-carpeta_pdf2 = r"D:\OneDrive - Grupo EPM\Descargas\ReportesDinamicaContable"
+carpeta_pdf = FOLDER_R5609FCT
+carpeta_pdf2 = FOLDER_DINAMICAS
+carpeta_origen = str(FOLDER_ORIGEN)
 
 #-----------------------------------------------------------------------------
 
@@ -70,32 +72,30 @@ def review_pdfs(driver, reportes, batchcarga):
 def mover_reportes():
     """
     Esta función automatiza el proceso de mover todos los archivos PDF cuyo nombre inicie por 'R5609FCT_'
-    de la carpeta Descargas a la carpeta Descargas/R5609FCT.
+    desde la carpeta Descargas a las carpetas R5609FCT y ReportesDinamicaContable.
     """
     # Definir rutas
-    carpeta_origen = r"D:\OneDrive - Grupo EPM\Descargas"
-    carpeta_destino = os.path.join(carpeta_origen, "R5609FCT")
-    carpeta_destino2 = os.path.join(carpeta_origen, "ReportesDinamicaContable")
+    carpeta_origen = FOLDER_ORIGEN
+    carpeta_destino = carpeta_origen / "R5609FCT"
+    carpeta_destino2 = carpeta_origen / "ReportesDinamicaContable"
 
     # Asegurar que las carpetas de destino existen
     for carpeta in [carpeta_destino, carpeta_destino2]:
-        if not os.path.exists(carpeta):
-            os.makedirs(carpeta)
+        carpeta.mkdir(parents=True, exist_ok=True)
 
     # Buscar archivos que cumplan con el patrón
-    for archivo in os.listdir(carpeta_origen):
-        if archivo.startswith("R5609FCT_") and archivo.endswith(".pdf"):
-            ruta_origen = os.path.join(carpeta_origen, archivo)
+    for archivo in carpeta_origen.glob("R5609FCT_*.pdf"):
+        # Mover el archivo a la carpeta R5609FCT
+        destino_1 = carpeta_destino / archivo.name
+        shutil.move(str(archivo), str(destino_1))
+        print(f"Movido a reportes: {archivo.name}")
 
-            # Mover el archivo a la primera carpeta
-            ruta_destino = os.path.join(carpeta_destino, archivo)
-            shutil.move(ruta_origen, ruta_destino)
-            print(f"Movido a reportes: {archivo}")
-            ruta_destino2 = os.path.join(carpeta_destino2, archivo)
-            shutil.copy(ruta_destino, ruta_destino2)
+        # Copiar a la carpeta ReportesDinamicaContable
+        destino_2 = carpeta_destino2 / archivo.name
+        shutil.copy(str(destino_1), str(destino_2))
 
+    print("✅ Proceso completado.")
 
-    print("Proceso completado.")
 
 #-----------------------------------------------------------------------------
 
@@ -157,7 +157,7 @@ def contrastar_debitos_y_creditos(carpeta_pdf, batchcarga):
 
 #-----------------------------------------------------------------------------
 def update_excel_batch_agrupacion(resultados, batchcarga):
-    excel_path = r"D:\\OneDrive - Grupo EPM\\Documentos\\InterfazFacturacion\\07.  FFN014-V1-Formato Registro BATCH-ABRIL.xlsx"
+    excel_path = EXCEL_PATH
     
     try:
         wb = openpyxl.load_workbook(excel_path)
@@ -202,7 +202,7 @@ def update_excel_batch_agrupacion(resultados, batchcarga):
         print(f"✅ Actualizado {hoja_nombre} en {celda_destino} con {agrupacion}")
     
     try:
-        wb.save(excel_path)
+        wb = openpyxl.load_workbook(str(excel_path))
         wb.close()
         print("✅ Archivo Excel actualizado correctamente.")
     except Exception as e:
@@ -215,18 +215,19 @@ def update_excel_batch_agrupacion(resultados, batchcarga):
 
 #-----------------------------------------------------------------------------
 
+from pathlib import Path
+
 def eliminar_reportes():
     """
     Elimina los archivos PDF de la carpeta 'R5609FCT' después del proceso.
     """
-    carpeta_destino = r"D:\OneDrive - Grupo EPM\Descargas\R5609FCT"
+    carpeta_destino = FOLDER_R5609FCT  # Ya es un Path
 
-    if os.path.exists(carpeta_destino):
-        for archivo in os.listdir(carpeta_destino):
-            ruta_archivo = os.path.join(carpeta_destino, archivo)
-            if os.path.isfile(ruta_archivo):
-                os.remove(ruta_archivo)
-                print(f"🗑 Eliminado: {archivo}")
+    if carpeta_destino.exists():
+        for archivo in carpeta_destino.iterdir():
+            if archivo.is_file():
+                archivo.unlink()
+                print(f"🗑 Eliminado: {archivo.name}")
         print("✅ Todos los archivos han sido eliminados.")
     else:
         print(f"⚠ La carpeta {carpeta_destino} no existe.")

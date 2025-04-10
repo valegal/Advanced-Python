@@ -6,6 +6,7 @@ from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.support import expected_conditions as EC
 from navigation import switch_to_iframe
 from selenium.webdriver.support.ui import Select
+from config import USER
 
 import time
 
@@ -87,7 +88,7 @@ def paso_al_f0911(driver, campo_from_val, campo_to_val):
         EC.presence_of_element_located((By.ID, "LITtf"))
     )
     campo_from.clear()
-    campo_from.send_keys("EMONTANC")
+    campo_from.send_keys(USER)
     print("✔ Texto EMONTANC escrito en 'LITtf'")
     time.sleep(1)
 
