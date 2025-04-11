@@ -1,3 +1,12 @@
+import logging
+import os
+import threading
+import ctypes
+import time
+import tkinter as tk
+from tkinter import ttk
+from tkcalendar import DateEntry
+
 from config import setup_driver, fecha_con_lib, USER, PASS, RUTA_RES_CARGA
 from login import login, logout, recargar_pagina
 from navigation import (
@@ -40,10 +49,8 @@ def main():
     driver = setup_driver()
     start_time = time.time()
 
-    logging.info("Iniciando sesión en el sistema.")
+    logging.info("Iniciando sesion en el sistema.")
     login(driver, USER, PASS)
-
-    time.sleep(100)
 
     #============= PASO 1: CARGA ARCHIVO IF ============= 
     logging.info("Paso 1: Navegando a 'Carga de archivo'")
@@ -58,7 +65,7 @@ def main():
     recargar_pagina(driver)
 
     #=============  PASO 2: REVISIÓN HECHOS ECONÓMICOS ============= 
-    logging.info("Paso 2: Revisión de hechos económicos")
+    logging.info("Paso 2: Revisión de hechos economicos")
     navigate_home(driver)
     time.sleep(3)
     navigate_to_revision_hechos(driver)
@@ -87,7 +94,7 @@ def main():
     recargar_pagina(driver)
 
     #=============  PASO 4: AGRUPACIÓN HECHOS ECONÓMICOS ============= 
-    logging.info("Paso 4: Agrupación de hechos económicos")
+    logging.info("Paso 4: Agrupacion de hechos económicos")
     for _ in range(numbatchcarga):
         navigate_agrupacion_hechos(driver)
         time.sleep(3)
@@ -115,7 +122,7 @@ def main():
     recargar_pagina(driver)
 
     #=============  PASO 6: REVISIÓN DE REPORTES CONTABLES ============= 
-    logging.info("Paso 6: Revisión de reportes contables")
+    logging.info("Paso 6: Revision de reportes contables")
     valores_columna_dos = review_pdfs(driver, numbatchcarga, batchcarga)
     valores_columna_dos = dict(sorted(valores_columna_dos.items(), key=lambda x: int(x[0])))
     navigate_home(driver)
@@ -145,14 +152,14 @@ def main():
     esperar_tareas_completas(driver, 1)
 
     #=============  PASO 11: REVISIÓN DEL COMPROBANTE ============= 
-    logging.info("Paso 11: Revisión del comprobante")
+    logging.info("Paso 11: Revision del comprobante")
     time.sleep(7)
     navigate_revision_comprobante(driver)
     contabilizar(driver)
     navigate_home(driver)
     time.sleep(3)
 
-    logging.info("Cerrando sesión y finalizando proceso.")
+    logging.info("Cerrando sesion y finalizando proceso.")
     logout(driver)
     restore_screen_lock()
     driver.quit()

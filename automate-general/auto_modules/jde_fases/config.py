@@ -1,7 +1,4 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-import logging
+from datetime import datetime, timedelta
 from pathlib import Path
 
 #========= Configuración general ==========
@@ -21,10 +18,16 @@ FOLDER_R5609FCT = Path.home() / "OneDrive - Grupo EPM" / "Descargas" / "R5609FCT
 FOLDER_DINAMICAS = Path.home() / "OneDrive - Grupo EPM" / "Descargas" / "ReportesDinamicaContable"
 FOLDER_ORIGEN = Path.home() / "OneDrive - Grupo EPM" / "Descargas" 
 
-# Variables modificables por el usuario
-fecha_gen = "20250407"
-fecha_con = "20250402"
+#========= Variables de fecha automáticas ==========
+
+# Día anterior al día actual
+yesterday = datetime.now() - timedelta(days=1)
+
+# Formato requerido por los sistemas (yyyymmdd)
+fecha_con = yesterday.strftime("%Y%m%d")
 fecha_con_lib = f"*{fecha_con}*"
+fecha_gen = datetime.now().strftime("%Y%m%d")  # Fecha de generación actual
+
 
 #-------------------------------------------------------------------------------------------------------
 

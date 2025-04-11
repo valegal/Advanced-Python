@@ -11,7 +11,7 @@ from selenium.webdriver.support.ui import Select
 import time
 from captura import capturar_output
 captura = capturar_output()
-fecha = "11/03/2025"
+fecha = "" #(11/03/2025)
 
 # Configuración del driver
 website_sac = "https://essa-ws12.essa.com.co:9095/GEN/Vistas/Login/LOGIN_GEN.aspx"
@@ -42,7 +42,7 @@ WebDriverWait(driver, 10).until(EC.staleness_of(select_element))
 WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "ContentPlaceHolder1_txtUsuario")))
 select_element = driver.find_element(By.ID, "ContentPlaceHolder1_txtUsuario")
 input_usuario = driver.find_element(By.ID, "ContentPlaceHolder1_txtUsuario")
-input_usuario.send_keys("EMONTANC")
+input_usuario.send_keys("")
 
 # Esperar a que el input de contraseña esté presente en el DOM y visible
 WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "txtPassword")))
@@ -51,7 +51,7 @@ input_pass = driver.find_element(By.ID, "txtPassword")
 # Hacer clic en el campo de contraseña para asegurarse de que sea activado
 ActionChains(driver).move_to_element(input_pass).click().perform()
 # Enviar la contraseña
-input_pass.send_keys("edmcESSA07**")
+input_pass.send_keys("")
 
 # Desplazarse hasta el botón de login
 login_button = driver.find_element(By.ID, "ContentPlaceHolder1_btnLogin")
