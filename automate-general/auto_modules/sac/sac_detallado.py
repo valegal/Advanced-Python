@@ -7,24 +7,30 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
-# from ejecutar_jde import ejecutar_main_jde
+from ejecutar_jde import ejecutar_main_jde
 from config_sac import WEBSITE_SAC, DRIVER_PATH
 from login_sac import login_sac
 from captura import capturar_output
 def ejecutar_sac_detallado(fecha, fase):
+   """Ejecuta el proceso SAC detallado para una fase específica"""
    start_time = time.time()
    print(f"Fecha seleccionada: {fecha}")
    print(f"Fase seleccionada: {fase}")
    captura = capturar_output()
+   driver = None
+   resultado = ""
    try:
-       # Configuración del driverSS
+       # Configuración del driver con opciones para suprimir logs no esenciales
        service = Service(executable_path=DRIVER_PATH)
-       driver = webdriver.Chrome(service=service)
+       options = webdriver.ChromeOptions()
+       options.add_experimental_option('excludeSwitches', ['enable-logging'])
+       options.add_argument('--log-level=3')
+       driver = webdriver.Chrome(service=service, options=options)
        driver.maximize_window()
        driver.get(WEBSITE_SAC)
        # Login al sistema
        login_sac(driver)
-       time.sleep(5)
+       time.sleep(3)
        print("#-------- SAC PROCESS OUTPUTS --------")
        # Navegación al módulo de procesos
        WebDriverWait(driver, 30).until(
@@ -42,15 +48,25 @@ def ejecutar_sac_detallado(fecha, fase):
        print("Navegación hasta procesos administrativos completada con éxito.")
        # Ejecutar fase seleccionada
        if fase == '1':
-           ejecutar_fase(driver, fecha, fase, "Facturación", 2, 3, "divDialogMessage2", "btnCerrarModal2", "divDialogMessage1", "btnCerrarModal1")
+           resultado = ejecutar_fase(driver, fecha, fase, "Facturación", 2, 3,
+                                  "divDialogMessage2", "btnCerrarModal2",
+                                  "divDialogMessage1", "btnCerrarModal1")
        elif fase == '2':
-           ejecutar_fase(driver, fecha, fase, "Autoconsumos", 2, 3, "divDialogMessage4", "btnCerrarModal4", "divDialogMessage3", "btnCerrarModal3")
+           resultado = ejecutar_fase(driver, fecha, fase, "Autoconsumos", 2, 3,
+                                  "divDialogMessage2", "btnCerrarModal2",
+                                  "divDialogMessage1", "btnCerrarModal1")
        elif fase == '3':
-           ejecutar_fase(driver, fecha, fase, "Ajustes", 2, 3, "divDialogMessage6", "btnCerrarModal6", "divDialogMessage5", "btnCerrarModal5")
+           resultado = ejecutar_fase(driver, fecha, fase, "Ajustes", 2, 3,
+                                  "divDialogMessage2", "btnCerrarModal2",
+                                  "divDialogMessage1", "btnCerrarModal1")
        elif fase == '4':
-           ejecutar_fase(driver, fecha, fase, "Recaudos", 1, 6, "divDialogMessage8", "btnCerrarModal8", "divDialogMessage7", "btnCerrarModal7")
+           resultado = ejecutar_fase(driver, fecha, fase, "Recaudos", 1, 6,
+                                  "divDialogMessage2", "btnCerrarModal2",
+                                  "divDialogMessage1", "btnCerrarModal1")
        elif fase == '5':
-           ejecutar_fase(driver, fecha, fase, "Castigo", 1, 4, "divDialogMessage10", "btnCerrarModal10", "divDialogMessage9", "btnCerrarModal9")
+           resultado = ejecutar_fase(driver, fecha, fase, "Castigo", 1, 4,
+                                  "divDialogMessage2", "btnCerrarModal2",
+                                  "divDialogMessage1", "btnCerrarModal1")
        else:
            raise ValueError(f"Fase inválida: {fase}")
        # Mostrar resultados
@@ -58,15 +74,19 @@ def ejecutar_sac_detallado(fecha, fase):
        # Cerrar sesión
        cerrar_sesion(driver)
        # Guardar resultados
-       guardar_resultados(fecha, captura, start_time)
-    #    # Ejecutar JDE
-    #    ejecutar_main_jde()
+       nombre_archivo = guardar_resultados(fecha, captura, start_time, fase)
+       return True, nombre_archivo
    except Exception as e:
-       print(f"Error durante la ejecución: {str(e)}")
-       if 'driver' in locals():
+       error_msg = f"Error durante la ejecución: {str(e)}"
+       print(error_msg)
+       if driver:
            driver.quit()
-       raise
+       return False, error_msg
+   finally:
+       if driver:
+           driver.quit()
 def ejecutar_fase(driver, fecha, fase, nombre_fase, pagina, fila, modal1, boton1, modal2, boton2):
+   """Ejecuta una fase específica del proceso SAC"""
    print(f"\nIniciando fase {fase} - {nombre_fase}")
    # Navegar a la página correcta
    if pagina > 1:
@@ -103,8 +123,11 @@ def ejecutar_fase(driver, fecha, fase, nombre_fase, pagina, fila, modal1, boton1
    ).click()
    # Manejar modales
    manejar_modales(driver, modal1, boton1, modal2, boton2)
-   print(f"Se ha generado '{nombre_fase}' correctamente")
+   mensaje_exito = f"Se ha generado '{nombre_fase}' correctamente"
+   print(mensaje_exito)
+   return mensaje_exito
 def manejar_modales(driver, modal1, boton1, modal2, boton2):
+   """Maneja los cuadros de diálogo modales después de ejecutar una fase"""
    try:
        WebDriverWait(driver, 60).until(
            EC.presence_of_element_located((By.ID, modal1))
@@ -121,6 +144,7 @@ def manejar_modales(driver, modal1, boton1, modal2, boton2):
    except Exception as e:
        print(f"Advertencia al manejar modales: {str(e)}")
 def mostrar_resultados(driver):
+   """Muestra los resultados de la ejecución"""
    print("\n#----- RESULTADOS -----")
    mensaje_ids = {
        '1': ["spaTextoMensaje1", "spaTextoMensaje2"],
@@ -145,6 +169,7 @@ def mostrar_resultados(driver):
    except Exception as e:
        print(f"Error al obtener mensajes: {str(e)}")
 def cerrar_sesion(driver):
+   """Cierra la sesión en SAC"""
    print("\nCerrando sesión en SAC")
    time.sleep(3)
    try:
@@ -155,9 +180,11 @@ def cerrar_sesion(driver):
        WebDriverWait(driver, 30).until(
            EC.element_to_be_clickable((By.ID, "btnSalir"))
        ).click()
+       time.sleep(2)
    except Exception as e:
        print(f"Error al cerrar sesión: {str(e)}")
-def guardar_resultados(fecha, captura, start_time):
+def guardar_resultados(fecha, captura, start_time, fase):
+   """Guarda los resultados en un archivo de texto"""
    # Calcular tiempo de ejecución
    end_time = time.time()
    execution_time = end_time - start_time
@@ -175,8 +202,10 @@ def guardar_resultados(fecha, captura, start_time):
    # Guardar resultados
    with open(nombre_archivo, "w", encoding="utf-8") as f:
        f.write(f"Fecha de ejecución: {fecha}\n")
+       f.write(f"Fase ejecutada: {fase}\n")
        f.write(f"ID único: {random_number}\n")
        f.write(f"Tiempo de ejecución: {formatted_time}\n\n")
        f.write(captura.texto)
    print(f"Resumen guardado en: {nombre_archivo}")
-   print("Proceso completado exitosamente")
+   print("Proceso SAC completado exitosamente")
+   return nombre_archivo
