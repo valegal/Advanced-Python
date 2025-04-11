@@ -22,8 +22,8 @@ FOLDER_DINAMICAS = Path.home() / "OneDrive - Grupo EPM" / "Descargas" / "Reporte
 FOLDER_ORIGEN = Path.home() / "OneDrive - Grupo EPM" / "Descargas" 
 
 # Variables modificables por el usuario
-fecha_gen = "20250407"
-fecha_con = "20250402"
+fecha_gen = "20250410"
+fecha_con = "20250404"
 fecha_con_lib = f"*{fecha_con}*"
 
 #-------------------------------------------------------------------------------------------------------

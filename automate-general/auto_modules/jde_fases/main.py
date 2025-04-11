@@ -52,33 +52,33 @@ def main():
     logging.info("Iniciando sesion en el sistema.")
     login(driver, USER, PASS)
 
-    #============= PASO 1: CARGA ARCHIVO IF ============= 
-    logging.info("Paso 1: Navegando a 'Carga de archivo'")
-    navigate_to_carga_archivo(driver)
+    # #============= PASO 1: CARGA ARCHIVO IF ============= 
+    # logging.info("Paso 1: Navegando a 'Carga de archivo'")
+    # navigate_to_carga_archivo(driver)
 
-    logging.info("Cargando fases con fecha: %s", fecha_con_lib)
-    action_cargar_fases(driver, fecha_con_lib)
+    # logging.info("Cargando fases con fecha: %s", fecha_con_lib)
+    # action_cargar_fases(driver, fecha_con_lib)
 
-    actualizar_informes_recientes(driver)
-    time.sleep(3)
-    esperar_tareas_completas(driver, 5)
-    recargar_pagina(driver)
+    # actualizar_informes_recientes(driver)
+    # time.sleep(3)
+    # esperar_tareas_completas(driver, 5)
+    # recargar_pagina(driver)
 
-    #=============  PASO 2: REVISIÓN HECHOS ECONÓMICOS ============= 
-    logging.info("Paso 2: Revisión de hechos economicos")
-    navigate_home(driver)
-    time.sleep(3)
-    navigate_to_revision_hechos(driver)
-    time.sleep(3)
-    search_estado_registro(driver)
-    navigate_home(driver)
+    # #=============  PASO 2: REVISIÓN HECHOS ECONÓMICOS ============= 
+    # logging.info("Paso 2: Revisión de hechos economicos")
+    # navigate_home(driver)
+    # time.sleep(3)
+    # navigate_to_revision_hechos(driver)
+    # time.sleep(3)
+    # search_estado_registro(driver)
+    # navigate_home(driver)
     recargar_pagina(driver)
     time.sleep(3)
 
     #=============  PASO 3: CONTROL DE ARCHIVOS CARGADOS ============= 
     logging.info("Paso 3: Verificando control de archivos cargados")
     navigate_control_archivos_cargados(driver)
-    time.sleep(3)
+
     res_carga = verify_control_archivos(driver)
     values = list(res_carga.values())
     batchcarga = {values[i + 1]: values[i] for i in range(0, len(values), 2)}
